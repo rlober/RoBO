@@ -11,7 +11,7 @@ title:            RoBo
 tagline:          Robust Bayesian Optimization
 description:      RoBO is a flexible framework for robust Bayesian Optimization.
 url:              http://numairmansur.github.io
-baseurl:          /RoboDocumentation1/
+baseurl:          /RoBO/
 
 author:
   name:           'Numair Mansur'
