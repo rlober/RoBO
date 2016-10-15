@@ -10,12 +10,12 @@ relative_permalinks: false
 title:            RoBo
 tagline:          Robust Bayesian Optimization
 description:      RoBO is a flexible framework for robust Bayesian Optimization.
-url:              http://numairmansur.github.io
+url:              http://automl.github.io/
 baseurl:          /RoBO/
 
 author:
-  name:           'Numair Mansur'
-  url:            https://numairmansur.github.io
+  name:           'auto ml'
+  url:            http://automl.github.io/
 
 paginate:         5
 
