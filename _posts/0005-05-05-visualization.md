@@ -3,7 +3,7 @@ layout: post
 title: Visualization
 ---
 
-# Plots
+## Plots
 RoBO offers following plots pre-implemented in it's visualization package.
 
 ## Mean
@@ -21,6 +21,7 @@ plot.show()
 {% endhighlight %}
 
 ## Median
+
 Plots the median of different runs of a method for a given time point.
 
 {% highlight python %}
@@ -35,8 +36,11 @@ plot.show()
 {% endhighlight %}
 
 ## Mean and Standard Deviation
+
 Plots Mean and Standard Deviation of methods with multiple runs
-Bar plot
+
+### Bar plot
+
 Plots in a bar format. 
 
 {% highlight python %}
@@ -49,7 +53,9 @@ methods = [method_1, method_2, method_3]
 plot = plot_mean_and_std(x,methods,drawBarPlot = True)
 plot.show()
 {% endhighlight %}
-Point plot
+
+### Point plot
+
 Plots with a point plot.
 {% highlight python %}
 #Example
@@ -63,8 +69,11 @@ plot.show()
 {% endhighlight %}
 
 ## Standard Error of Mean
-Bar plot
+
+### Bar plot
+
 Plots in a bar format.
+
 {% highlight python %}
 #Example
 x = np.array([[1, 3, 4, 5], [1, 3, 4, 5], [1, 3, 4, 6]])
@@ -75,7 +84,9 @@ methods = [method_1, method_2, method_3]
 plot = plotStandardErrorOfMean(x,methods,drawBarPlot = True)
 plot.show()
 {% endhighlight %}
-Point plot
+
+### Point plot
+
 Plots with a point plot.
 
 {% highlight python %}
@@ -111,4 +122,5 @@ methods = [method_1, method_2, method_3]
 plot = plot_median_and_percentiles(x,methods)
 plot.show()
 {% endhighlight %}
+
 -----
