@@ -36,7 +36,7 @@ plot.show()
 
 ## Mean and Standard Deviation
 Plots Mean and Standard Deviation of methods with multiple runs
-### bar plot
+Bar plot
 Plots in a bar format. 
 
 {% highlight python %}
@@ -49,7 +49,7 @@ methods = [method_1, method_2, method_3]
 plot = plot_mean_and_std(x,methods,drawBarPlot = True)
 plot.show()
 {% endhighlight %}
-### Point plot
+Point plot
 Plots with a point plot.
 {% highlight python %}
 #Example
@@ -63,7 +63,7 @@ plot.show()
 {% endhighlight %}
 
 ## Standard Error of Mean
-### bar plot
+Bar plot
 Plots in a bar format.
 {% highlight python %}
 #Example
@@ -75,7 +75,7 @@ methods = [method_1, method_2, method_3]
 plot = plotStandardErrorOfMean(x,methods,drawBarPlot = True)
 plot.show()
 {% endhighlight %}
-### point plot
+Point plot
 Plots with a point plot.
 
 {% highlight python %}
@@ -111,6 +111,4 @@ methods = [method_1, method_2, method_3]
 plot = plot_median_and_percentiles(x,methods)
 plot.show()
 {% endhighlight %}
-
-
 -----
