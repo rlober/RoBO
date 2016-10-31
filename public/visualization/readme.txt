@@ -1,1 +1,1 @@
-Images for visualization part
+Images for Visualization
