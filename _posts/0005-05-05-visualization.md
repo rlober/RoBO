@@ -20,6 +20,8 @@ plot = plot_mean(x,methods,method_names)
 plot.show()
 {% endhighlight %}
 
+![placeholder](https://github.com/automl/RoBO/blob/gh-pages/public/visualization/mean.png "mean")
+
 ## Median
 
 Plots the median of different runs of a method for a given time point.
