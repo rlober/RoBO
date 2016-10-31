@@ -75,6 +75,8 @@ plot = plot_mean_and_std(x,methods,drawPointPlot = True)
 plot.show()
 {% endhighlight %}
 
+![placeholder](http://automl.github.io/RoBO/public/visualization/plot_mean_and_std_point.png "Mean and Standard Deviation")
+
 ## Standard Error of Mean
 
 ### Bar plot
