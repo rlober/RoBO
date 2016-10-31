@@ -20,7 +20,7 @@ plot = plot_mean(x,methods,method_names)
 plot.show()
 {% endhighlight %}
 
-![placeholder](http://automl.github.io/RoBO/public/visualization/mean.png "mean")
+![placeholder](http://automl.github.io/RoBO/public/visualization/mean.png "Mean")
 
 ## Median
 
@@ -36,6 +36,8 @@ methods = [method_1, method_2, method_3]
 plot = plot_median(x,methods)
 plot.show()
 {% endhighlight %}
+
+![placeholder](http://automl.github.io/RoBO/public/visualization/median.png "Median")
 
 ## Mean and Standard Deviation
 
@@ -55,6 +57,9 @@ methods = [method_1, method_2, method_3]
 plot = plot_mean_and_std(x,methods,drawBarPlot = True)
 plot.show()
 {% endhighlight %}
+
+
+![placeholder](http://automl.github.io/RoBO/public/visualization/plot_median_and_std.png "Mean and Standard Deviation")
 
 ### Point plot
 
@@ -87,6 +92,8 @@ plot = plotStandardErrorOfMean(x,methods,drawBarPlot = True)
 plot.show()
 {% endhighlight %}
 
+![placeholder](http://automl.github.io/RoBO/public/visualization/standard_error_of_mean_bar.png "Std error of mean")
+
 ### Point plot
 
 Plots with a point plot.
@@ -101,6 +108,8 @@ plot = plotStandardErrorOfMean(x,methods,drawPointPlot = True)
 plot.show()
 {% endhighlight %}
 
+![placeholder](http://automl.github.io/RoBO/public/visualization/standard_error_of_mean_point.png "Std error of mean")
+
 ## Plot Over Time
 Takes different runs of a method with different time points and interpolates each run so that all the runs have a value at all the time points.
 
@@ -111,6 +120,9 @@ methods = [method1]
 plot = plot_over_time(time,methods,0.9)
 plot.show()
 {% endhighlight %}
+
+
+![placeholder](http://automl.github.io/RoBO/public/visualization/plot_over_time.png "plot over time")
 
 ## Median and Percentiles
 Plots the median and the percentiles of different runs of a method for a given time point. By default plots the 5th and 95th percentile, if values not given.
@@ -125,4 +137,5 @@ plot = plot_median_and_percentiles(x,methods)
 plot.show()
 {% endhighlight %}
 
+![placeholder](http://automl.github.io/RoBO/public/visualization/median_and_percentiles.png "Median and Percentiles")
 -----
