@@ -20,7 +20,7 @@ plot = plot_mean(x,methods,method_names)
 plot.show()
 {% endhighlight %}
 
-![placeholder](https://github.com/automl/RoBO/blob/gh-pages/public/visualization/mean.png "mean")
+![placeholder](http://automl.github.io/RoBO/public/visualization/mean.png "mean")
 
 ## Median
 
