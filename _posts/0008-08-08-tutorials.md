@@ -3,8 +3,6 @@ layout: post
 title: Tutorials
 ---
 
-# Tutorials
-
 The following tutorials will show you how to use the different Bayesian optimization methods
 that are implemented in RoBO.
 
