@@ -4,9 +4,6 @@ title: Installation
 ---
 
 
-# Installation
-
-
 ## Dependencies
 
 RoBO needs the following dependencies to be installed for it's core functionality.
