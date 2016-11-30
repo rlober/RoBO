@@ -1,17 +1,17 @@
-.. _tutorials
+---
+layout: post
+title: Tutorials
+---
 
-=========
-Tutorials
-=========
+# Tutorials
 
 The following tutorials will show you how to use the different Bayesian optimization methods
 that are implemented in RoBO.
 
 The code for all the tutorials and more examples can be found in the ``examples`` folder.
 
----------------------
-Bayesian Optimization
----------------------
+
+## Bayesian Optimization
 
 This tutorial will show you how to use vanilla Bayesian optimization with Gaussian processes and
 different acquisition functions.
@@ -19,45 +19,40 @@ different acquisition functions.
 The first thing we have to do is to import numpy (for the objective function) and
 the bayesian_optimization function
 
-.. code-block:: python
 
-  import numpy as np
-
-  from robo.fmin import bayesian_optimization
+>  import numpy as np
+>
+>  from robo.fmin import bayesian_optimization
 
 
 To use RoBO we have to define a function that symbolizes the objective function we want to minimize.
 The objective function gets an d-dimensional vector x and returns the corresponding scalar target value.
 
-.. code-block:: python
 
-    def objective_function(x):
-        y = np.sin(3 * x[0]) * 4 * (x[0] - 1) * (x[0] + 2)
-        return y
+>    def objective_function(x):
+>        y = np.sin(3 * x[0]) * 4 * (x[0] - 1) * (x[0] + 2)
+>        return y
 
 
 Before we can apply Bayesian optimization we have to define the lower and upper bound of our input
 search space first.
 In this case we have just a one dimensional optimization problem.
 
-.. code-block:: python
 
-    lower = np.array([0])
-    upper = np.array([6])
+>    lower = np.array([0])
+>    upper = np.array([6])
 
 
 Now we have everything we need and can now run Bayesian optimization for 50 iterations:
 
-.. code-block:: python
 
-    results = bayesian_optimization(objective_function, lower, upper, num_iterations=50)
+>    results = bayesian_optimization(objective_function, lower, upper, num_iterations=50)
 
 
 At the end we get a dictionary back with all the results and some additional meta information
 
-.. code-block:: python
 
-    print(results["x_opt"])
+>    print(results["x_opt"])
 
 
 By default RoBO uses Gaussian processes (with MCMC sampling to obtain the GP#s hyperparameters) and logarithmic
@@ -65,45 +60,37 @@ expected improvement as acquisition function.
 If you would like to use a different acquisition function such as for instance the lower confidence bound
 you can simple :
 
-.. code-block:: python
-
-    results = bayesian_optimization(objective_function, lower, upper, acquisition_func='lcb')
+>    results = bayesian_optimization(objective_function, lower, upper, acquisition_func='lcb')
 
 See the API documentation for different possible choices of acquisition functions.
 
 If you want to have a deeper look what RoBO is doing under the hood you can activate RoBO's logging
 mechanism by adding the following two lines on top of your python script:
 
-.. code-block:: python
 
-    import logging
-    logging.basicConfig(level=logging.INFO)
+>    import logging
+>    logging.basicConfig(level=logging.INFO)
 
 
----------
-Bohamiann
----------
+## Bohamiann
 
 RoBO offers an simple interface for Bayesian Optimization with Hamiltonian Monte Carlo Artificial Neural Networks
 (BOHAMIANN) which was introduced by Sprigenberg et al.
 
 If you want to use Bohamiann make sure that you have Lasagne and Theano installed:
 
-.. code-block:: python
-
-    pip install Lasagne
-    pip install theano
+>    pip install Lasagne
+>    pip install theano
 
 
 and that the `sgmcmc package <https://github.com/stokasto/sgmcmc>`_ is in your PYTHONPATH:
 
 The interface to Bohamiann is exactly the same as for the GP based Bayesian optimization interface:
 
-.. code-block:: python
 
-    from robo.fmin import bohamiann
-
-    results = bohamiann(objective_function, lower, upper, num_iterations=50)
+>    from robo.fmin import bohamiann
+>
+>    results = bohamiann(objective_function, lower, upper, num_iterations=50)
 
 Again this will return a dictionary with the results and some meta information.
 
@@ -115,9 +102,8 @@ Again this will return a dictionary with the results and some meta information.
        year = {2016}
 }
 
--------
-Fabolas
--------
+
+## Fabolas
 
 The idea of Fabolas (Klein et al.) is to take the training data set size as an additional input into account that
 can be freely chosen during the optimization procedure. However the goal is still to find
