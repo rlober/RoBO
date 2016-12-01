@@ -17,58 +17,60 @@ different acquisition functions.
 The first thing we have to do is to import numpy (for the objective function) and
 the bayesian_optimization function
 
+```python
+import numpy as np
 
->  import numpy as np
->
->  from robo.fmin import bayesian_optimization
-
+from robo.fmin import bayesian_optimization
+```
 
 To use RoBO we have to define a function that symbolizes the objective function we want to minimize.
 The objective function gets an d-dimensional vector x and returns the corresponding scalar target value.
 
-
->    def objective_function(x):
->        y = np.sin(3 * x[0]) * 4 * (x[0] - 1) * (x[0] + 2)
->        return y
-
+```python
+def objective_function(x):
+    y = np.sin(3 * x[0]) * 4 * (x[0] - 1) * (x[0] + 2)
+    return y
+```
 
 Before we can apply Bayesian optimization we have to define the lower and upper bound of our input
 search space first.
 In this case we have just a one dimensional optimization problem.
 
-
->    lower = np.array([0])
->    upper = np.array([6])
-
+```python
+lower = np.array([0])
+upper = np.array([6])
+```
 
 Now we have everything we need and can now run Bayesian optimization for 50 iterations:
 
-
->    results = bayesian_optimization(objective_function, lower, upper, num_iterations=50)
-
+```python
+results = bayesian_optimization(objective_function, lower, upper, num_iterations=50)
+```
 
 At the end we get a dictionary back with all the results and some additional meta information
 
-
->    print(results["x_opt"])
-
+```python
+print(results["x_opt"])
+```
 
 By default RoBO uses Gaussian processes (with MCMC sampling to obtain the GP#s hyperparameters) and logarithmic
 expected improvement as acquisition function.
 If you would like to use a different acquisition function such as for instance the lower confidence bound
 you can simple :
 
->    results = bayesian_optimization(objective_function, lower, upper, acquisition_func='lcb')
+```python
+results = bayesian_optimization(objective_function, lower, upper, acquisition_func='lcb')
+```
 
 See the API documentation for different possible choices of acquisition functions.
 
 If you want to have a deeper look what RoBO is doing under the hood you can activate RoBO's logging
 mechanism by adding the following two lines on top of your python script:
 
-
->    import logging
->    logging.basicConfig(level=logging.INFO)
-
+```python
+import logging
+logging.basicConfig(level=logging.INFO)
+```
 
 ## Bohamiann
 
@@ -77,18 +79,19 @@ RoBO offers an simple interface for Bayesian Optimization with Hamiltonian Monte
 
 If you want to use Bohamiann make sure that you have Lasagne and Theano installed:
 
->    pip install Lasagne
->    pip install theano
+    pip install Lasagne
+    pip install theano
 
 
-and that the `sgmcmc package <https://github.com/stokasto/sgmcmc>`_ is in your PYTHONPATH:
+and that the [sgmcmc package](<https://github.com/stokasto/sgmcmc>) is in your PYTHONPATH:
 
 The interface to Bohamiann is exactly the same as for the GP based Bayesian optimization interface:
 
+```python
+from robo.fmin import bohamiann
 
->    from robo.fmin import bohamiann
->
->    results = bohamiann(objective_function, lower, upper, num_iterations=50)
+results = bohamiann(objective_function, lower, upper, num_iterations=50)
+```
 
 Again this will return a dictionary with the results and some meta information.
 
@@ -115,37 +118,37 @@ The objective function gets besides a configuration also the training dataset si
 the configuration on a subset of the training data it returns the validation error on the full
 validation data set as well as the time it took to train this configuration.
 
-.. code-block:: python
+```python
+from robo.fmin import fabolas
 
-    from robo.fmin import fabolas
-
-    def objective_function(x, s):
-            # Train your algorithm here with x on the dataset subset with length s
-            # Estimate the validation error and the cost on the validation data set
-            return validation_error, cost
+def objective_function(x, s):
+    # Train your algorithm here with x on the dataset subset with length s
+    # Estimate the validation error and the cost on the validation data set
+    return validation_error, cost
+```
 
 Additionally you have to define the bounds of the input space for the configurations and the minimum and
 maximum data set size.
 
-.. code-block:: python
-
-    lower = np.array([-10, -10])
-    upper = np.array([10, 10])
-    s_min = 100
-    s_max = 50000
+```python
+lower = np.array([-10, -10])
+upper = np.array([10, 10])
+s_min = 100
+s_max = 50000
+```
 
 Then you can call Fabolas by:
 
-.. code-block:: python
-
-    res = fabolas(objective_function,
+```python
+res = fabolas(objective_function,
                   lower=lower,
                   upper=upper,
                   s_min=s_min,
                   s_max=s_max,
                   num_iterations=100)
+```
 
-You can find a full example for training a support vector machine on MNIST here
+You can find a full example for training a support vector machine on MNIST [here](https://github.com/automl/RoBO/blob/master/examples/example_fmin_fabolas.py)
 
 @article{klein-corr16,
  author    = {A. Klein and S. Falkner and S. Bartels and P. Hennig and F. Hutter},
