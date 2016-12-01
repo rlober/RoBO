@@ -31,6 +31,10 @@ Additionally RoBO has some optional dependencies that are only needed for specif
 
 ## Manual Installation
 
+RoBO uses the Gaussian processes library [george](https://github.com/dfm/george) . In order to use this library make sure the libeigen is installed:
+
+    sudo apt-get install libeigen3-dev
+
 
 To install RoBO first clone the repository:
 
