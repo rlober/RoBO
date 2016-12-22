@@ -1,0 +1,114 @@
+.. test documentation master file, created by
+   sphinx-quickstart on Sat Oct 15 20:21:40 2016.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+============
+APIs
+============
+
+.. toctree::
+   :maxdepth: 2
+------------
+Main Modules:
+------------
+
+Acquisition:
+------------
+
+.. autoclass:: robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction
+   :members:
+
+.. autoclass:: robo.acquisition_functions.ei.EI
+   :members:
+
+.. autoclass:: robo.acquisition_functions.information_gain.InformationGain
+   :members:
+
+.. autoclass:: robo.acquisition_functions.information_gain_mc.InformationGainMC
+   :members:
+
+.. autoclass:: robo.acquisition_functions.information_gain_per_unit_cost.InformationGainPerUnitCost
+   :members:
+
+.. autoclass:: robo.acquisition_functions.integrated_acquisition.IntegratedAcquisition
+   :members:
+
+.. autoclass:: robo.acquisition_functions.lcb.LCB
+   :members:
+
+.. autoclass:: robo.acquisition_functions.log_ei.LogEI
+   :members:
+
+.. autoclass:: robo.acquisition_functions.marginalization.MarginalizationGPMCMC
+   :members:
+
+.. autoclass:: robo.acquisition_functions.pi.PI
+   :members:
+
+
+Models:
+------------
+
+.. autoclass:: robo.models.base_model.BaseModel
+   :members:
+
+.. autoclass:: robo.models.bagged_networks.BaggedNets
+   :members:
+
+.. autoclass:: robo.models.bayesian_linear_regression.BayesianLinearRegression
+   :members:
+
+.. autoclass:: robo.models.bnn.BayesianNeuralNetwork
+   :members:
+
+.. autoclass:: robo.models.dngo.DNGO
+   :members:
+
+.. autoclass:: robo.models.fabolas_gp.FabolasGPMCMC
+   :members:
+
+.. autoclass:: robo.models.gaussian_process.GaussianProcess
+   :members:
+
+.. autoclass:: robo.models.gaussian_process_mcmc.GaussianProcessMCMC
+   :members:
+
+.. autoclass:: robo.models.neural_network.SGDNet
+   :members:
+
+.. autoclass:: robo.models.random_forest.RandomForest
+   :members:
+
+
+Maximizers:
+------------
+
+.. autoclass:: robo.maximizers.cmaes.CMAES
+   :members:
+
+.. autoclass:: robo.maximizers.direct.Direct
+   :members:
+
+.. autoclass:: robo.maximizers.grid_search.GridSearch
+   :members:
+
+.. autoclass:: robo.maximizers.scipy_optimizer.SciPyOptimizer
+   :members:
+
+.. autoclass:: robo.maximizers.base_maximizer.BaseMaximizer
+   :members:
+
+
+
+
+
+
+
+
+
+
+
+
+
+

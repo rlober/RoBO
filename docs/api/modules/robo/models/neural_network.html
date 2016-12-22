@@ -1,0 +1,443 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robo.models.neural_network &mdash; test 1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="test 1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../../index.html">test 1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robo.models.neural_network</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">lasagne</span>
+    <span class="kn">import</span> <span class="nn">theano</span>
+    <span class="kn">import</span> <span class="nn">theano.tensor</span> <span class="kn">as</span> <span class="nn">T</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;If you want to use Neural Networks you have to install the following dependencies:</span><span class="se">\n</span><span class="s">&quot;</span>
+                     <span class="s">&quot;Theano (pip install theano)</span><span class="se">\n</span><span class="s">&quot;</span>
+                     <span class="s">&quot;Lasagne (pip install lasagne)&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SGDNet"><a class="viewcode-back" href="../../../index.html#robo.models.neural_network.SGDNet">[docs]</a><span class="k">class</span> <span class="nc">SGDNet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_inputs</span><span class="p">,</span>  <span class="n">n_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                 <span class="n">error_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">learning_rate</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+                 <span class="n">n_units</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+                 <span class="n">dropout</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+                 <span class="n">batch_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle_batches</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                 <span class="n">normalize_output</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                 <span class="n">normalize_input</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_inputs : int</span>
+<span class="sd">            Number of input features</span>
+<span class="sd">        n_epochs : int</span>
+<span class="sd">            maxmimum number of epochs</span>
+<span class="sd">        learning_rate : float</span>
+<span class="sd">            learing rate used for ADAM</span>
+<span class="sd">        n_units : list of ints</span>
+<span class="sd">            number of units in each layer, thus controls also the number of layers</span>
+<span class="sd">        dropout : float or list of floats</span>
+<span class="sd">            If it&#39;s a list, every element defines the dropout for each layer. If it&#39;s float</span>
+<span class="sd">            the same dropout is applied at each layer</span>
+<span class="sd">        batch_size : int</span>
+<span class="sd">            size of the minibatches used during training</span>
+<span class="sd">        shuffle_batches : boolean</span>
+<span class="sd">            whether or not to permute the data points during training</span>
+<span class="sd">        normalize_output : boolean</span>
+<span class="sd">            whether or not the output should be scaled to zero mean, unit variance for training</span>
+<span class="sd">        normalize_input : boolean</span>
+<span class="sd">            whether or not the input should be scaled to zero mean, unit variance for training</span>
+<span class="sd">        rng : numpy.random.RandomState</span>
+<span class="sd">            the random number generator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span>
+        <span class="n">lasagne</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">set_rng</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_inputs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_inputs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_epochs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_threshold</span> <span class="o">=</span> <span class="n">error_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_units</span> <span class="o">=</span> <span class="n">n_units</span>
+
+        <span class="c"># bring the dropout parameters in a common form</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">n_units</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Number of dropout rates must match the number of layers&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">dropout</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="p">[</span><span class="n">dropout</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">n_units</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_batches</span> <span class="o">=</span> <span class="n">shuffle_batches</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_trained</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalize_output</span> <span class="o">=</span> <span class="n">normalize_output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span> <span class="o">=</span> <span class="n">normalize_input</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_mean</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_std</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_mean</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_std</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_var</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="s">&#39;inputs&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="SGDNet.initialize_net"><a class="viewcode-back" href="../../../index.html#robo.models.neural_network.SGDNet.initialize_net">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_net</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            creates the network and the associated loss and update functions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">InputLayer</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_inputs</span><span class="p">),</span> <span class="n">input_var</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_var</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_units</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">DenseLayer</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">,</span>
+                <span class="n">num_units</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+                <span class="n">W</span><span class="o">=</span><span class="n">lasagne</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">HeNormal</span><span class="p">(),</span>
+                <span class="n">b</span><span class="o">=</span><span class="n">lasagne</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">nonlinearity</span><span class="o">=</span><span class="n">lasagne</span><span class="o">.</span><span class="n">nonlinearities</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">DenseLayer</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">,</span>
+            <span class="n">num_units</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">W</span><span class="o">=</span><span class="n">lasagne</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">HeNormal</span><span class="p">(),</span>
+            <span class="n">b</span><span class="o">=</span><span class="n">lasagne</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">nonlinearity</span><span class="o">=</span><span class="n">lasagne</span><span class="o">.</span><span class="n">nonlinearities</span><span class="o">.</span><span class="n">linear</span><span class="p">)</span>
+
+        <span class="n">target_var</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="s">&#39;targets&#39;</span><span class="p">)</span>
+
+        <span class="n">prediction</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">get_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">objectives</span><span class="o">.</span><span class="n">squared_error</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">target_var</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">get_all_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">,</span> <span class="n">trainable</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">updates</span><span class="o">.</span><span class="n">adam</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">l_rate</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_fn</span> <span class="o">=</span> <span class="n">theano</span><span class="o">.</span><span class="n">function</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">input_var</span><span class="p">,</span> <span class="n">target_var</span><span class="p">],</span> <span class="n">loss</span><span class="p">,</span> <span class="n">updates</span><span class="o">=</span><span class="n">updates</span><span class="p">)</span>
+
+        <span class="n">test_prediction</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">get_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">test_loss</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">objectives</span><span class="o">.</span><span class="n">squared_error</span><span class="p">(</span><span class="n">test_prediction</span><span class="p">,</span> <span class="n">target_var</span><span class="p">)</span>
+        <span class="n">test_loss</span> <span class="o">=</span> <span class="n">test_loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_fn</span> <span class="o">=</span> <span class="n">theano</span><span class="o">.</span><span class="n">function</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">input_var</span><span class="p">,</span> <span class="n">target_var</span><span class="p">],</span> <span class="n">test_loss</span><span class="p">)</span>
+
+        <span class="c"># g = T.grad(test_prediction, self.input_var)</span>
+
+        <span class="c"># self.gradient = theano.function([self.input_var], g)</span>
+</div>
+<div class="viewcode-block" id="SGDNet.train"><a class="viewcode-back" href="../../../index.html#robo.models.neural_network.SGDNet.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trains the model on the provided data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: np.ndarray (N, D)</span>
+<span class="sd">            Input data points. The dimensionality of X is (N, D),</span>
+<span class="sd">            with N as the number of points and D is the number of features.</span>
+<span class="sd">        Y: np.ndarray (N, T)</span>
+<span class="sd">            The corresponding target values.</span>
+<span class="sd">            The dimensionality of Y is (N, T), where N has to</span>
+<span class="sd">            match the number of points of X and T is the number of objectives</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_net</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">:</span>
+            <span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_inputs</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_std</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_output</span><span class="p">:</span>
+            <span class="n">Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_targets</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_std</span> <span class="o">=</span> <span class="n">Y</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Starting training...&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span><span class="p">):</span>
+
+            <span class="n">train_err</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">train_batches</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterate_minibatches</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shuffle_batches</span><span class="p">):</span>
+                <span class="n">inputs</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">batch</span>
+                <span class="n">train_err</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+                <span class="n">train_batches</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Epoch {} of {} took {:.3f}s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  training loss:</span><span class="se">\t\t</span><span class="s">{:.6f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">train_err</span> <span class="o">/</span> <span class="n">train_batches</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">train_err</span><span class="o">/</span><span class="n">train_batches</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_threshold</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="n">l</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">get_all_layers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">get_output</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">X</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="SGDNet.validation_error"><a class="viewcode-back" href="../../../index.html#robo.models.neural_network.SGDNet.validation_error">[docs]</a>    <span class="k">def</span> <span class="nf">validation_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_valid</span><span class="p">,</span> <span class="n">Y_valid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trains the model on the provided data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X_valid: np.ndarray (N, D)</span>
+<span class="sd">            Validation data points. The dimensionality is (N, D),</span>
+<span class="sd">            where N is the number of points and D is the number of features.</span>
+<span class="sd">        Y_valid: np.ndarray (N, T)</span>
+<span class="sd">            The corresponding target values.</span>
+<span class="sd">            The dimensionality of Y is (N, T), where N has to</span>
+<span class="sd">            match the number of points of X and T is the number of objectives</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">X_valid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">X_valid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">:</span>
+            <span class="n">X_valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_inputs</span><span class="p">(</span><span class="n">X_valid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_std</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_output</span><span class="p">:</span>
+            <span class="n">Y_valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_targets</span><span class="p">(</span><span class="n">Y_valid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_std</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">val_err</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">val_batches</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterate_minibatches</span><span class="p">(</span><span class="n">X_valid</span><span class="p">,</span> <span class="n">Y_valid</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+            <span class="n">inputs</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">batch</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+            <span class="n">val_err</span> <span class="o">+=</span> <span class="n">err</span>
+            <span class="n">val_batches</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  valid loss:</span><span class="se">\t\t</span><span class="s">{:.6f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">val_err</span> <span class="o">/</span> <span class="n">val_batches</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">val_err</span> <span class="o">/</span> <span class="n">val_batches</span>
+</div>
+<div class="viewcode-block" id="SGDNet.predict"><a class="viewcode-back" href="../../../index.html#robo.models.neural_network.SGDNet.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_test</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        makes predictions for all given points</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X_test : numpy.array</span>
+<span class="sd">            2d matrix with points as rows</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        ----------</span>
+<span class="sd">        numpy.array(dtype=float)</span>
+<span class="sd">            predictions for all points</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Model is not trained!&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">:</span>
+            <span class="n">X_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_inputs</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_std</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">l</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">get_all_layers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">lasagne</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">get_output</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+        <span class="c"># denormalize output</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_output</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">denormalize</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_std</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">m</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]</span>
+
+    <span class="c"># def predict_gradient(self, X):</span>
+    <span class="c">#</span>
+    <span class="c">#     fx = 1.</span>
+    <span class="c">#     fy = 1.</span>
+    <span class="c">#</span>
+    <span class="c">#     if self.normalize_input:</span>
+    <span class="c">#         X_test = self.normalize_inputs(X, self.x_mean, self.x_std)[0]</span>
+    <span class="c">#         fx = self.x_std</span>
+    <span class="c">#</span>
+    <span class="c">#     g = self.gradient(X)</span>
+    <span class="c">#</span>
+    <span class="c">#     if self.normalize_output:</span>
+    <span class="c">#         g = self.normalize_outputs(g, self.y_mean, self.y_std)[0]</span>
+    <span class="c">#         fy = self.y_std</span>
+    <span class="c">#</span>
+    <span class="c">#     return g * (fy/fx)</span>
+</div>
+<div class="viewcode-block" id="SGDNet.iterate_minibatches"><a class="viewcode-back" href="../../../index.html#robo.models.neural_network.SGDNet.iterate_minibatches">[docs]</a>    <span class="k">def</span> <span class="nf">iterate_minibatches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">batchsize</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            helper function to quickly iterate over the data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">))</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">start_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="o">-</span> <span class="n">batchsize</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">batchsize</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+                <span class="n">excerpt</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">start_idx</span> <span class="o">+</span> <span class="n">batchsize</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">excerpt</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">start_idx</span><span class="p">,</span> <span class="n">start_idx</span> <span class="o">+</span> <span class="n">batchsize</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">inputs</span><span class="p">[</span><span class="n">excerpt</span><span class="p">],</span> <span class="n">targets</span><span class="p">[</span><span class="n">excerpt</span><span class="p">]</span>
+
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SGDNet.normalize_inputs"><a class="viewcode-back" href="../../../index.html#robo.models.neural_network.SGDNet.normalize_inputs">[docs]</a>    <span class="k">def</span> <span class="nf">normalize_inputs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        normalize_inputs</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : numpy.array</span>
+<span class="sd">            input vector</span>
+<span class="sd">        mean: float</span>
+<span class="sd">            mean used for normalization</span>
+<span class="sd">        std: float</span>
+<span class="sd">            standard deviation used for normalization</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        ----------</span>
+<span class="sd">        float</span>
+<span class="sd">            scaled x as input to the network</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mean</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">std</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SGDNet.normalize_targets"><a class="viewcode-back" href="../../../index.html#robo.models.neural_network.SGDNet.normalize_targets">[docs]</a>    <span class="k">def</span> <span class="nf">normalize_targets</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        normalize_targets</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        y : numpy.array</span>
+<span class="sd">            target values</span>
+<span class="sd">        mean: float</span>
+<span class="sd">            mean used for normalization</span>
+<span class="sd">        std: float</span>
+<span class="sd">            standard deviation used for normalization</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        ----------</span>
+<span class="sd">        float</span>
+<span class="sd">            scaled y as target output for the network</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mean</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">std</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SGDNet.denormalize"><a class="viewcode-back" href="../../../index.html#robo.models.neural_network.SGDNet.denormalize">[docs]</a>    <span class="k">def</span> <span class="nf">denormalize</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        denormalize</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        y : numpy.array</span>
+<span class="sd">            target values</span>
+<span class="sd">        mean: float</span>
+<span class="sd">            mean used for normalization</span>
+<span class="sd">        std: float</span>
+<span class="sd">            standard deviation used for normalization</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        ----------</span>
+<span class="sd">        float</span>
+<span class="sd">            scaled y as target output for the network</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">mean</span> <span class="o">+</span> <span class="n">x</span> <span class="o">*</span> <span class="n">std</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../../index.html">test 1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, numair.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

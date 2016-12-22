@@ -8,8 +8,8 @@
     
     <title>APIs &mdash; test 1 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -20,9 +20,9 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="test 1 documentation" href="#" /> 
   </head>
@@ -54,10 +54,10 @@
 <h3>Acquisition:<a class="headerlink" href="#acquisition" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction">
-<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.base_acquisition.</tt><tt class="descname">BaseAcquisitionFunction</tt><big>(</big><em>model</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/base_acquisition.html#BaseAcquisitionFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.base_acquisition.</tt><tt class="descname">BaseAcquisitionFunction</tt><big>(</big><em>model</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/base_acquisition.html#BaseAcquisitionFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction.compute">
-<tt class="descname">compute</tt><big>(</big><em>x</em>, <em>derivative=False</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/base_acquisition.html#BaseAcquisitionFunction.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction.compute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">compute</tt><big>(</big><em>x</em>, <em>derivative=False</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/base_acquisition.html#BaseAcquisitionFunction.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the acquisition_functions value for a given point X. This function has
 to be overwritten in a derived class.</p>
 <dl class="docutils">
@@ -71,7 +71,7 @@ function at X is returned</dd>
 
 <dl class="method">
 <dt id="robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction.get_json_data">
-<tt class="descname">get_json_data</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/base_acquisition.html#BaseAcquisitionFunction.get_json_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction.get_json_data" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_json_data</tt><big>(</big><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/base_acquisition.html#BaseAcquisitionFunction.get_json_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction.get_json_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json getter function</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -85,7 +85,7 @@ function at X is returned</dd>
 
 <dl class="method">
 <dt id="robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction.update">
-<tt class="descname">update</tt><big>(</big><em>model</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/base_acquisition.html#BaseAcquisitionFunction.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction.update" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">update</tt><big>(</big><em>model</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/base_acquisition.html#BaseAcquisitionFunction.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.base_acquisition.BaseAcquisitionFunction.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method will be called if the model is updated. E.g.
 Entropy search uses it to update it&#8217;s approximation of P(x=x_min)</p>
 <dl class="docutils">
@@ -98,10 +98,10 @@ Entropy search uses it to update it&#8217;s approximation of P(x=x_min)</p>
 
 <dl class="class">
 <dt id="robo.acquisition_functions.ei.EI">
-<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.ei.</tt><tt class="descname">EI</tt><big>(</big><em>model</em>, <em>par=0.0</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/ei.html#EI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.ei.EI" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.ei.</tt><tt class="descname">EI</tt><big>(</big><em>model</em>, <em>par=0.0</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/ei.html#EI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.ei.EI" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.acquisition_functions.ei.EI.compute">
-<tt class="descname">compute</tt><big>(</big><em>X</em>, <em>derivative=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/ei.html#EI.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.ei.EI.compute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">compute</tt><big>(</big><em>X</em>, <em>derivative=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/ei.html#EI.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.ei.EI.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the EI value and its derivatives.</p>
 <dl class="docutils">
 <dt>X: np.ndarray(1, D), The input point where the acquisition_functions function</dt>
@@ -124,10 +124,10 @@ function at X is returned</dd>
 
 <dl class="class">
 <dt id="robo.acquisition_functions.information_gain.InformationGain">
-<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.information_gain.</tt><tt class="descname">InformationGain</tt><big>(</big><em>model</em>, <em>lower</em>, <em>upper</em>, <em>Nb=50</em>, <em>Np=400</em>, <em>sampling_acquisition=None</em>, <em>sampling_acquisition_kw={'par': 0.0}</em>, <em>rng=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/information_gain.html#InformationGain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.information_gain.InformationGain" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.information_gain.</tt><tt class="descname">InformationGain</tt><big>(</big><em>model</em>, <em>lower</em>, <em>upper</em>, <em>Nb=50</em>, <em>Np=400</em>, <em>sampling_acquisition=None</em>, <em>sampling_acquisition_kw={'par': 0.0}</em>, <em>rng=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/information_gain.html#InformationGain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.information_gain.InformationGain" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.acquisition_functions.information_gain.InformationGain.compute">
-<tt class="descname">compute</tt><big>(</big><em>X_test</em>, <em>derivative=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/information_gain.html#InformationGain.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.information_gain.InformationGain.compute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">compute</tt><big>(</big><em>X_test</em>, <em>derivative=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/information_gain.html#InformationGain.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.information_gain.InformationGain.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the information gain of X and its derivatives</p>
 <dl class="docutils">
 <dt>X_test: np.ndarray(N, D), The input point where the acquisition_functions function</dt>
@@ -150,15 +150,15 @@ Not tested!</dd>
 
 <dl class="class">
 <dt id="robo.acquisition_functions.information_gain_mc.InformationGainMC">
-<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.information_gain_mc.</tt><tt class="descname">InformationGainMC</tt><big>(</big><em>model</em>, <em>lower</em>, <em>upper</em>, <em>Nb=50</em>, <em>Nf=500</em>, <em>sampling_acquisition=None</em>, <em>sampling_acquisition_kw={'par': 0.0}</em>, <em>Np=50</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/information_gain_mc.html#InformationGainMC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.information_gain_mc.InformationGainMC" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.information_gain_mc.</tt><tt class="descname">InformationGainMC</tt><big>(</big><em>model</em>, <em>lower</em>, <em>upper</em>, <em>Nb=50</em>, <em>Nf=500</em>, <em>sampling_acquisition=None</em>, <em>sampling_acquisition_kw={'par': 0.0}</em>, <em>Np=50</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/information_gain_mc.html#InformationGainMC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.information_gain_mc.InformationGainMC" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="class">
 <dt id="robo.acquisition_functions.information_gain_per_unit_cost.InformationGainPerUnitCost">
-<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.information_gain_per_unit_cost.</tt><tt class="descname">InformationGainPerUnitCost</tt><big>(</big><em>model</em>, <em>cost_model</em>, <em>lower</em>, <em>upper</em>, <em>is_env_variable</em>, <em>n_representer=50</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/information_gain_per_unit_cost.html#InformationGainPerUnitCost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.information_gain_per_unit_cost.InformationGainPerUnitCost" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.information_gain_per_unit_cost.</tt><tt class="descname">InformationGainPerUnitCost</tt><big>(</big><em>model</em>, <em>cost_model</em>, <em>lower</em>, <em>upper</em>, <em>is_env_variable</em>, <em>n_representer=50</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/information_gain_per_unit_cost.html#InformationGainPerUnitCost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.information_gain_per_unit_cost.InformationGainPerUnitCost" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.acquisition_functions.information_gain_per_unit_cost.InformationGainPerUnitCost.compute">
-<tt class="descname">compute</tt><big>(</big><em>X</em>, <em>derivative=False</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/information_gain_per_unit_cost.html#InformationGainPerUnitCost.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.information_gain_per_unit_cost.InformationGainPerUnitCost.compute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">compute</tt><big>(</big><em>X</em>, <em>derivative=False</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/information_gain_per_unit_cost.html#InformationGainPerUnitCost.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.information_gain_per_unit_cost.InformationGainPerUnitCost.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the acquisition_functions value for a single point.</p>
 <dl class="docutils">
 <dt>X <span class="classifier-delimiter">:</span> <span class="classifier">(1, D) numpy array</span></dt>
@@ -180,10 +180,10 @@ returned if derivative==True</dd>
 
 <dl class="class">
 <dt id="robo.acquisition_functions.integrated_acquisition.IntegratedAcquisition">
-<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.integrated_acquisition.</tt><tt class="descname">IntegratedAcquisition</tt><big>(</big><em>model</em>, <em>acquisition_func</em>, <em>X_lower</em>, <em>X_upper</em>, <em>cost_model=None</em>, <em>is_dngo=False</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/integrated_acquisition.html#IntegratedAcquisition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.integrated_acquisition.IntegratedAcquisition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.integrated_acquisition.</tt><tt class="descname">IntegratedAcquisition</tt><big>(</big><em>model</em>, <em>acquisition_func</em>, <em>X_lower</em>, <em>X_upper</em>, <em>cost_model=None</em>, <em>is_dngo=False</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/integrated_acquisition.html#IntegratedAcquisition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.integrated_acquisition.IntegratedAcquisition" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.acquisition_functions.integrated_acquisition.IntegratedAcquisition.compute">
-<tt class="descname">compute</tt><big>(</big><em>X</em>, <em>derivative=False</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/integrated_acquisition.html#IntegratedAcquisition.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.integrated_acquisition.IntegratedAcquisition.compute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">compute</tt><big>(</big><em>X</em>, <em>derivative=False</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/integrated_acquisition.html#IntegratedAcquisition.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.integrated_acquisition.IntegratedAcquisition.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Integrates the acquisition_functions function over the GP&#8217;s hyperparameters by
 averaging the acquisition_functions value for X of each hyperparameter sample.</p>
 <dl class="docutils">
@@ -205,7 +205,7 @@ function at X is returned</dd>
 
 <dl class="method">
 <dt id="robo.acquisition_functions.integrated_acquisition.IntegratedAcquisition.update">
-<tt class="descname">update</tt><big>(</big><em>model</em>, <em>cost_model=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/integrated_acquisition.html#IntegratedAcquisition.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.integrated_acquisition.IntegratedAcquisition.update" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">update</tt><big>(</big><em>model</em>, <em>cost_model=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/integrated_acquisition.html#IntegratedAcquisition.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.integrated_acquisition.IntegratedAcquisition.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates each acquisition_functions function object if the models
 have changed</p>
 <dl class="docutils">
@@ -223,10 +223,10 @@ has to be an instance of GaussianProcessMCMC or GPyModelMCMC.</dd>
 
 <dl class="class">
 <dt id="robo.acquisition_functions.lcb.LCB">
-<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.lcb.</tt><tt class="descname">LCB</tt><big>(</big><em>model</em>, <em>par=1.0</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/lcb.html#LCB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.lcb.LCB" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.lcb.</tt><tt class="descname">LCB</tt><big>(</big><em>model</em>, <em>par=1.0</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/lcb.html#LCB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.lcb.LCB" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.acquisition_functions.lcb.LCB.compute">
-<tt class="descname">compute</tt><big>(</big><em>X</em>, <em>derivative=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/lcb.html#LCB.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.lcb.LCB.compute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">compute</tt><big>(</big><em>X</em>, <em>derivative=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/lcb.html#LCB.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.lcb.LCB.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the LCB acquisition_functions value and its derivatives.</p>
 <dl class="docutils">
 <dt>X: np.ndarray(N, D), The input point where the acquisition_functions function</dt>
@@ -249,10 +249,10 @@ function at X is returned.</dd>
 
 <dl class="class">
 <dt id="robo.acquisition_functions.log_ei.LogEI">
-<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.log_ei.</tt><tt class="descname">LogEI</tt><big>(</big><em>model</em>, <em>par=0.0</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/log_ei.html#LogEI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.log_ei.LogEI" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.log_ei.</tt><tt class="descname">LogEI</tt><big>(</big><em>model</em>, <em>par=0.0</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/log_ei.html#LogEI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.log_ei.LogEI" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.acquisition_functions.log_ei.LogEI.compute">
-<tt class="descname">compute</tt><big>(</big><em>X</em>, <em>derivative=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/log_ei.html#LogEI.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.log_ei.LogEI.compute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">compute</tt><big>(</big><em>X</em>, <em>derivative=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/log_ei.html#LogEI.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.log_ei.LogEI.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Log EI value and its derivatives.</p>
 <dl class="docutils">
 <dt>X: np.ndarray(1, D), The input point where the acquisition_functions function</dt>
@@ -277,10 +277,10 @@ Not implemented yet!</dd>
 
 <dl class="class">
 <dt id="robo.acquisition_functions.marginalization.MarginalizationGPMCMC">
-<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.marginalization.</tt><tt class="descname">MarginalizationGPMCMC</tt><big>(</big><em>acquisition_func</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/marginalization.html#MarginalizationGPMCMC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.marginalization.MarginalizationGPMCMC" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.marginalization.</tt><tt class="descname">MarginalizationGPMCMC</tt><big>(</big><em>acquisition_func</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/marginalization.html#MarginalizationGPMCMC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.marginalization.MarginalizationGPMCMC" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.acquisition_functions.marginalization.MarginalizationGPMCMC.compute">
-<tt class="descname">compute</tt><big>(</big><em>X_test</em>, <em>derivative=False</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/marginalization.html#MarginalizationGPMCMC.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.marginalization.MarginalizationGPMCMC.compute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">compute</tt><big>(</big><em>X_test</em>, <em>derivative=False</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/marginalization.html#MarginalizationGPMCMC.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.marginalization.MarginalizationGPMCMC.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Integrates the acquisition_functions function over the GP&#8217;s hyperparameters by
 averaging the acquisition_functions value for X of each hyperparameter sample.</p>
 <dl class="docutils">
@@ -302,7 +302,7 @@ function at X is returned</dd>
 
 <dl class="method">
 <dt id="robo.acquisition_functions.marginalization.MarginalizationGPMCMC.update">
-<tt class="descname">update</tt><big>(</big><em>model</em>, <em>cost_model=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/marginalization.html#MarginalizationGPMCMC.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.marginalization.MarginalizationGPMCMC.update" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">update</tt><big>(</big><em>model</em>, <em>cost_model=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/marginalization.html#MarginalizationGPMCMC.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.marginalization.MarginalizationGPMCMC.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates each acquisition_functions function object if the models
 have changed</p>
 <dl class="docutils">
@@ -320,10 +320,10 @@ has to be an instance of GaussianProcessMCMC.</dd>
 
 <dl class="class">
 <dt id="robo.acquisition_functions.pi.PI">
-<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.pi.</tt><tt class="descname">PI</tt><big>(</big><em>model</em>, <em>par=0.0</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/pi.html#PI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.pi.PI" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.acquisition_functions.pi.</tt><tt class="descname">PI</tt><big>(</big><em>model</em>, <em>par=0.0</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/pi.html#PI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.pi.PI" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.acquisition_functions.pi.PI.compute">
-<tt class="descname">compute</tt><big>(</big><em>X_test</em>, <em>derivative=False</em><big>)</big><a class="reference internal" href="_modules/robo/acquisition_functions/pi.html#PI.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.pi.PI.compute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">compute</tt><big>(</big><em>X_test</em>, <em>derivative=False</em><big>)</big><a class="reference internal" href="modules/robo/acquisition_functions/pi.html#PI.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.acquisition_functions.pi.PI.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the PI value and its derivatives.</p>
 <dl class="docutils">
 <dt>X_test: np.ndarray(1, D), The input point where the acquisition_functions function</dt>
@@ -350,10 +350,10 @@ function at X is returned</dd>
 <h3>Models:<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="robo.models.base_model.BaseModel">
-<em class="property">class </em><tt class="descclassname">robo.models.base_model.</tt><tt class="descname">BaseModel</tt><a class="reference internal" href="_modules/robo/models/base_model.html#BaseModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.models.base_model.</tt><tt class="descname">BaseModel</tt><a class="reference internal" href="modules/robo/models/base_model.html#BaseModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.models.base_model.BaseModel.get_incumbent">
-<tt class="descname">get_incumbent</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robo/models/base_model.html#BaseModel.get_incumbent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.get_incumbent" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_incumbent</tt><big>(</big><big>)</big><a class="reference internal" href="modules/robo/models/base_model.html#BaseModel.get_incumbent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.get_incumbent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the best observed point and its function value</p>
 <dl class="docutils">
 <dt>incumbent: ndarray (D,)</dt>
@@ -365,7 +365,7 @@ function at X is returned</dd>
 
 <dl class="method">
 <dt id="robo.models.base_model.BaseModel.get_json_data">
-<tt class="descname">get_json_data</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robo/models/base_model.html#BaseModel.get_json_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.get_json_data" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_json_data</tt><big>(</big><big>)</big><a class="reference internal" href="modules/robo/models/base_model.html#BaseModel.get_json_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.get_json_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json getter function&#8217;</p>
 <blockquote>
 <div>dictionary</div></blockquote>
@@ -373,7 +373,7 @@ function at X is returned</dd>
 
 <dl class="method">
 <dt id="robo.models.base_model.BaseModel.predict">
-<tt class="descname">predict</tt><big>(</big><em>X_test</em><big>)</big><a class="reference internal" href="_modules/robo/models/base_model.html#BaseModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.predict" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">predict</tt><big>(</big><em>X_test</em><big>)</big><a class="reference internal" href="modules/robo/models/base_model.html#BaseModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predicts for a given set of test data points the mean and variance of its target values</p>
 <dl class="docutils">
 <dt>X_test: np.ndarray (N, D)</dt>
@@ -389,7 +389,7 @@ function at X is returned</dd>
 
 <dl class="method">
 <dt id="robo.models.base_model.BaseModel.train">
-<tt class="descname">train</tt><big>(</big><em>X</em>, <em>y</em><big>)</big><a class="reference internal" href="_modules/robo/models/base_model.html#BaseModel.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.train" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">train</tt><big>(</big><em>X</em>, <em>y</em><big>)</big><a class="reference internal" href="modules/robo/models/base_model.html#BaseModel.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trains the model on the provided data.</p>
 <dl class="docutils">
 <dt>X: np.ndarray (N, D)</dt>
@@ -402,7 +402,7 @@ with N as the number of points and D is the number of input dimensions.</dd>
 
 <dl class="method">
 <dt id="robo.models.base_model.BaseModel.update">
-<tt class="descname">update</tt><big>(</big><em>X</em>, <em>y</em><big>)</big><a class="reference internal" href="_modules/robo/models/base_model.html#BaseModel.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.update" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">update</tt><big>(</big><em>X</em>, <em>y</em><big>)</big><a class="reference internal" href="modules/robo/models/base_model.html#BaseModel.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the model with the new additional data. Override this function if your
 model allows to do something smarter than simple retraining</p>
 <dl class="docutils">
@@ -418,11 +418,11 @@ with N as the number of points and D is the number of input dimensions.</dd>
 
 <dl class="class">
 <dt id="robo.models.bagged_networks.BaggedNets">
-<em class="property">class </em><tt class="descclassname">robo.models.bagged_networks.</tt><tt class="descname">BaggedNets</tt><big>(</big><em>base_model_class</em>, <em>num_models=16</em>, <em>bootstrap_size=None</em>, <em>bootstrap_with_replacement=True</em>, <em>**init_kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/models/bagged_networks.html#BaggedNets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.bagged_networks.BaggedNets" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.models.bagged_networks.</tt><tt class="descname">BaggedNets</tt><big>(</big><em>base_model_class</em>, <em>num_models=16</em>, <em>bootstrap_size=None</em>, <em>bootstrap_with_replacement=True</em>, <em>**init_kwargs</em><big>)</big><a class="reference internal" href="modules/robo/models/bagged_networks.html#BaggedNets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.bagged_networks.BaggedNets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract base class for all models</p>
 <dl class="method">
 <dt id="robo.models.bagged_networks.BaggedNets.get_json_data">
-<tt class="descname">get_json_data</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robo/models/bagged_networks.html#BaggedNets.get_json_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.bagged_networks.BaggedNets.get_json_data" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_json_data</tt><big>(</big><big>)</big><a class="reference internal" href="modules/robo/models/bagged_networks.html#BaggedNets.get_json_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.bagged_networks.BaggedNets.get_json_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json getter function&#8217;</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -436,7 +436,7 @@ with N as the number of points and D is the number of input dimensions.</dd>
 
 <dl class="method">
 <dt id="robo.models.bagged_networks.BaggedNets.predict">
-<tt class="descname">predict</tt><big>(</big><em>X</em><big>)</big><a class="reference internal" href="_modules/robo/models/bagged_networks.html#BaggedNets.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.bagged_networks.BaggedNets.predict" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">predict</tt><big>(</big><em>X</em><big>)</big><a class="reference internal" href="modules/robo/models/bagged_networks.html#BaggedNets.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.bagged_networks.BaggedNets.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predicts for a given X matrix the target values</p>
 <dl class="docutils">
 <dt>X: np.ndarray (N, D)</dt>
@@ -449,7 +449,7 @@ with N as the number of points and D is the number of features.</dd>
 
 <dl class="method">
 <dt id="robo.models.bagged_networks.BaggedNets.predictive_gradients">
-<tt class="descname">predictive_gradients</tt><big>(</big><em>X</em><big>)</big><a class="reference internal" href="_modules/robo/models/bagged_networks.html#BaggedNets.predictive_gradients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.bagged_networks.BaggedNets.predictive_gradients" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">predictive_gradients</tt><big>(</big><em>X</em><big>)</big><a class="reference internal" href="modules/robo/models/bagged_networks.html#BaggedNets.predictive_gradients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.bagged_networks.BaggedNets.predictive_gradients" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the predictive gradients (gradient of the prediction)</p>
 <dl class="docutils">
 <dt>X: np.ndarray (N, D)</dt>
@@ -461,7 +461,7 @@ with N as the number of points and D is the number of features.</dd>
 
 <dl class="method">
 <dt id="robo.models.bagged_networks.BaggedNets.train">
-<tt class="descname">train</tt><big>(</big><em>X</em>, <em>Y</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/models/bagged_networks.html#BaggedNets.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.bagged_networks.BaggedNets.train" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">train</tt><big>(</big><em>X</em>, <em>Y</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/models/bagged_networks.html#BaggedNets.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.bagged_networks.BaggedNets.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trains the model on the provided data.</p>
 <dl class="docutils">
 <dt>X: np.ndarray (N, D)</dt>
@@ -480,10 +480,10 @@ match the number of points of X and T is the number of objectives</dd>
 
 <dl class="class">
 <dt id="robo.models.neural_network.SGDNet">
-<em class="property">class </em><tt class="descclassname">robo.models.neural_network.</tt><tt class="descname">SGDNet</tt><big>(</big><em>n_inputs, n_epochs=100, error_threshold=0, learning_rate=0.001, n_units=[10, 10, 10], dropout=[0.5, 0.5, 0.5], batch_size=10, shuffle_batches=False, normalize_output=True, normalize_input=True, rng=None</em><big>)</big><a class="reference internal" href="_modules/robo/models/neural_network.html#SGDNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.models.neural_network.</tt><tt class="descname">SGDNet</tt><big>(</big><em>n_inputs, n_epochs=100, error_threshold=0, learning_rate=0.001, n_units=[10, 10, 10], dropout=[0.5, 0.5, 0.5], batch_size=10, shuffle_batches=False, normalize_output=True, normalize_input=True, rng=None</em><big>)</big><a class="reference internal" href="modules/robo/models/neural_network.html#SGDNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="staticmethod">
 <dt id="robo.models.neural_network.SGDNet.denormalize">
-<em class="property">static </em><tt class="descname">denormalize</tt><big>(</big><em>x</em>, <em>mean</em>, <em>std</em><big>)</big><a class="reference internal" href="_modules/robo/models/neural_network.html#SGDNet.denormalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.denormalize" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descname">denormalize</tt><big>(</big><em>x</em>, <em>mean</em>, <em>std</em><big>)</big><a class="reference internal" href="modules/robo/models/neural_network.html#SGDNet.denormalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.denormalize" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>y <span class="classifier-delimiter">:</span> <span class="classifier">numpy.array</span></dt>
 <dd>target values</dd>
@@ -500,19 +500,19 @@ match the number of points of X and T is the number of objectives</dd>
 
 <dl class="method">
 <dt id="robo.models.neural_network.SGDNet.initialize_net">
-<tt class="descname">initialize_net</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robo/models/neural_network.html#SGDNet.initialize_net"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.initialize_net" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">initialize_net</tt><big>(</big><big>)</big><a class="reference internal" href="modules/robo/models/neural_network.html#SGDNet.initialize_net"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.initialize_net" title="Permalink to this definition">¶</a></dt>
 <dd><p>creates the network and the associated loss and update functions</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="robo.models.neural_network.SGDNet.iterate_minibatches">
-<tt class="descname">iterate_minibatches</tt><big>(</big><em>inputs</em>, <em>targets</em>, <em>batchsize</em>, <em>shuffle=False</em><big>)</big><a class="reference internal" href="_modules/robo/models/neural_network.html#SGDNet.iterate_minibatches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.iterate_minibatches" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">iterate_minibatches</tt><big>(</big><em>inputs</em>, <em>targets</em>, <em>batchsize</em>, <em>shuffle=False</em><big>)</big><a class="reference internal" href="modules/robo/models/neural_network.html#SGDNet.iterate_minibatches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.iterate_minibatches" title="Permalink to this definition">¶</a></dt>
 <dd><p>helper function to quickly iterate over the data</p>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="robo.models.neural_network.SGDNet.normalize_inputs">
-<em class="property">static </em><tt class="descname">normalize_inputs</tt><big>(</big><em>x</em>, <em>mean=None</em>, <em>std=None</em><big>)</big><a class="reference internal" href="_modules/robo/models/neural_network.html#SGDNet.normalize_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.normalize_inputs" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descname">normalize_inputs</tt><big>(</big><em>x</em>, <em>mean=None</em>, <em>std=None</em><big>)</big><a class="reference internal" href="modules/robo/models/neural_network.html#SGDNet.normalize_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.normalize_inputs" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>x <span class="classifier-delimiter">:</span> <span class="classifier">numpy.array</span></dt>
 <dd>input vector</dd>
@@ -529,7 +529,7 @@ match the number of points of X and T is the number of objectives</dd>
 
 <dl class="staticmethod">
 <dt id="robo.models.neural_network.SGDNet.normalize_targets">
-<em class="property">static </em><tt class="descname">normalize_targets</tt><big>(</big><em>y</em>, <em>mean=None</em>, <em>std=None</em><big>)</big><a class="reference internal" href="_modules/robo/models/neural_network.html#SGDNet.normalize_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.normalize_targets" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descname">normalize_targets</tt><big>(</big><em>y</em>, <em>mean=None</em>, <em>std=None</em><big>)</big><a class="reference internal" href="modules/robo/models/neural_network.html#SGDNet.normalize_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.normalize_targets" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>y <span class="classifier-delimiter">:</span> <span class="classifier">numpy.array</span></dt>
 <dd>target values</dd>
@@ -546,7 +546,7 @@ match the number of points of X and T is the number of objectives</dd>
 
 <dl class="method">
 <dt id="robo.models.neural_network.SGDNet.predict">
-<tt class="descname">predict</tt><big>(</big><em>X_test</em><big>)</big><a class="reference internal" href="_modules/robo/models/neural_network.html#SGDNet.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.predict" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">predict</tt><big>(</big><em>X_test</em><big>)</big><a class="reference internal" href="modules/robo/models/neural_network.html#SGDNet.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>makes predictions for all given points</p>
 <dl class="docutils">
 <dt>X_test <span class="classifier-delimiter">:</span> <span class="classifier">numpy.array</span></dt>
@@ -560,7 +560,7 @@ match the number of points of X and T is the number of objectives</dd>
 
 <dl class="method">
 <dt id="robo.models.neural_network.SGDNet.train">
-<tt class="descname">train</tt><big>(</big><em>X</em>, <em>Y</em><big>)</big><a class="reference internal" href="_modules/robo/models/neural_network.html#SGDNet.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.train" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">train</tt><big>(</big><em>X</em>, <em>Y</em><big>)</big><a class="reference internal" href="modules/robo/models/neural_network.html#SGDNet.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trains the model on the provided data.</p>
 <dl class="docutils">
 <dt>X: np.ndarray (N, D)</dt>
@@ -575,7 +575,7 @@ match the number of points of X and T is the number of objectives</dd>
 
 <dl class="method">
 <dt id="robo.models.neural_network.SGDNet.validation_error">
-<tt class="descname">validation_error</tt><big>(</big><em>X_valid</em>, <em>Y_valid</em><big>)</big><a class="reference internal" href="_modules/robo/models/neural_network.html#SGDNet.validation_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.validation_error" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">validation_error</tt><big>(</big><em>X_valid</em>, <em>Y_valid</em><big>)</big><a class="reference internal" href="modules/robo/models/neural_network.html#SGDNet.validation_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.neural_network.SGDNet.validation_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trains the model on the provided data.</p>
 <dl class="docutils">
 <dt>X_valid: np.ndarray (N, D)</dt>
@@ -592,7 +592,7 @@ match the number of points of X and T is the number of objectives</dd>
 
 <dl class="class">
 <dt id="robo.models.random_forest.RandomForest">
-<em class="property">class </em><tt class="descclassname">robo.models.random_forest.</tt><tt class="descname">RandomForest</tt><big>(</big><em>types</em>, <em>num_trees=30</em>, <em>do_bootstrapping=True</em>, <em>n_points_per_tree=0</em>, <em>ratio_features=0.5</em>, <em>min_samples_split=2</em>, <em>min_samples_leaf=5</em>, <em>max_depth=100</em>, <em>eps_purity=1e-08</em>, <em>max_num_nodes=0</em>, <em>seed=42</em><big>)</big><a class="reference internal" href="_modules/robo/models/random_forest.html#RandomForest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.random_forest.RandomForest" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.models.random_forest.</tt><tt class="descname">RandomForest</tt><big>(</big><em>types</em>, <em>num_trees=30</em>, <em>do_bootstrapping=True</em>, <em>n_points_per_tree=0</em>, <em>ratio_features=0.5</em>, <em>min_samples_split=2</em>, <em>min_samples_leaf=5</em>, <em>max_depth=100</em>, <em>eps_purity=1e-08</em>, <em>max_num_nodes=0</em>, <em>seed=42</em><big>)</big><a class="reference internal" href="modules/robo/models/random_forest.html#RandomForest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.random_forest.RandomForest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interface for the random_forest_run library to model the
 objective function with a random forest.</p>
 <dl class="docutils">
@@ -622,7 +622,7 @@ have to pass np.array([2, 0]). Note that we count starting from 0.</dd>
 </dl>
 <dl class="method">
 <dt id="robo.models.random_forest.RandomForest.predict">
-<tt class="descname">predict</tt><big>(</big><em>Xtest</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/models/random_forest.html#RandomForest.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.random_forest.RandomForest.predict" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">predict</tt><big>(</big><em>Xtest</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/models/random_forest.html#RandomForest.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.random_forest.RandomForest.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the predictive mean and variance of the objective function
 at X average over the predictions of all trees.</p>
 <dl class="docutils">
@@ -639,7 +639,7 @@ at X average over the predictions of all trees.</p>
 
 <dl class="method">
 <dt id="robo.models.random_forest.RandomForest.train">
-<tt class="descname">train</tt><big>(</big><em>X</em>, <em>Y</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/models/random_forest.html#RandomForest.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.random_forest.RandomForest.train" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">train</tt><big>(</big><em>X</em>, <em>Y</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/models/random_forest.html#RandomForest.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.random_forest.RandomForest.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trains the random forest on X and Y.</p>
 <dl class="docutils">
 <dt>X: np.ndarray (N, D)</dt>
@@ -657,10 +657,10 @@ with N as the number of points and D is the number of features.</dd>
 <h3>Maximizers:<a class="headerlink" href="#maximizers" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="robo.maximizers.cmaes.CMAES">
-<em class="property">class </em><tt class="descclassname">robo.maximizers.cmaes.</tt><tt class="descname">CMAES</tt><big>(</big><em>objective_function</em>, <em>lower</em>, <em>upper</em>, <em>verbose=True</em>, <em>restarts=0</em>, <em>n_func_evals=1000</em>, <em>rng=None</em><big>)</big><a class="reference internal" href="_modules/robo/maximizers/cmaes.html#CMAES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.cmaes.CMAES" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.maximizers.cmaes.</tt><tt class="descname">CMAES</tt><big>(</big><em>objective_function</em>, <em>lower</em>, <em>upper</em>, <em>verbose=True</em>, <em>restarts=0</em>, <em>n_func_evals=1000</em>, <em>rng=None</em><big>)</big><a class="reference internal" href="modules/robo/maximizers/cmaes.html#CMAES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.cmaes.CMAES" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.maximizers.cmaes.CMAES.maximize">
-<tt class="descname">maximize</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robo/maximizers/cmaes.html#CMAES.maximize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.cmaes.CMAES.maximize" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">maximize</tt><big>(</big><big>)</big><a class="reference internal" href="modules/robo/maximizers/cmaes.html#CMAES.maximize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.cmaes.CMAES.maximize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximizes the given acquisition function.</p>
 <dl class="docutils">
 <dt>np.ndarray(N,D)</dt>
@@ -672,10 +672,10 @@ with N as the number of points and D is the number of features.</dd>
 
 <dl class="class">
 <dt id="robo.maximizers.direct.Direct">
-<em class="property">class </em><tt class="descclassname">robo.maximizers.direct.</tt><tt class="descname">Direct</tt><big>(</big><em>objective_function</em>, <em>lower</em>, <em>upper</em>, <em>n_func_evals=400</em>, <em>n_iters=200</em>, <em>verbose=False</em><big>)</big><a class="reference internal" href="_modules/robo/maximizers/direct.html#Direct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.direct.Direct" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.maximizers.direct.</tt><tt class="descname">Direct</tt><big>(</big><em>objective_function</em>, <em>lower</em>, <em>upper</em>, <em>n_func_evals=400</em>, <em>n_iters=200</em>, <em>verbose=False</em><big>)</big><a class="reference internal" href="modules/robo/maximizers/direct.html#Direct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.direct.Direct" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.maximizers.direct.Direct.maximize">
-<tt class="descname">maximize</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robo/maximizers/direct.html#Direct.maximize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.direct.Direct.maximize" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">maximize</tt><big>(</big><big>)</big><a class="reference internal" href="modules/robo/maximizers/direct.html#Direct.maximize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.direct.Direct.maximize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximizes the given acquisition function.</p>
 <dl class="docutils">
 <dt>np.ndarray(N,D)</dt>
@@ -687,10 +687,10 @@ with N as the number of points and D is the number of features.</dd>
 
 <dl class="class">
 <dt id="robo.maximizers.grid_search.GridSearch">
-<em class="property">class </em><tt class="descclassname">robo.maximizers.grid_search.</tt><tt class="descname">GridSearch</tt><big>(</big><em>objective_function</em>, <em>lower</em>, <em>upper</em>, <em>resolution=1000</em><big>)</big><a class="reference internal" href="_modules/robo/maximizers/grid_search.html#GridSearch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.grid_search.GridSearch" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.maximizers.grid_search.</tt><tt class="descname">GridSearch</tt><big>(</big><em>objective_function</em>, <em>lower</em>, <em>upper</em>, <em>resolution=1000</em><big>)</big><a class="reference internal" href="modules/robo/maximizers/grid_search.html#GridSearch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.grid_search.GridSearch" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.maximizers.grid_search.GridSearch.maximize">
-<tt class="descname">maximize</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robo/maximizers/grid_search.html#GridSearch.maximize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.grid_search.GridSearch.maximize" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">maximize</tt><big>(</big><big>)</big><a class="reference internal" href="modules/robo/maximizers/grid_search.html#GridSearch.maximize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.grid_search.GridSearch.maximize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximizes the given acquisition function.</p>
 <dl class="docutils">
 <dt>np.ndarray(N,D)</dt>
@@ -702,10 +702,10 @@ with N as the number of points and D is the number of features.</dd>
 
 <dl class="class">
 <dt id="robo.maximizers.scipy_optimizer.SciPyOptimizer">
-<em class="property">class </em><tt class="descclassname">robo.maximizers.scipy_optimizer.</tt><tt class="descname">SciPyOptimizer</tt><big>(</big><em>objective_function</em>, <em>X_lower</em>, <em>X_upper</em>, <em>n_restarts=10</em>, <em>verbosity=False</em>, <em>rng=None</em><big>)</big><a class="reference internal" href="_modules/robo/maximizers/scipy_optimizer.html#SciPyOptimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.scipy_optimizer.SciPyOptimizer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.maximizers.scipy_optimizer.</tt><tt class="descname">SciPyOptimizer</tt><big>(</big><em>objective_function</em>, <em>X_lower</em>, <em>X_upper</em>, <em>n_restarts=10</em>, <em>verbosity=False</em>, <em>rng=None</em><big>)</big><a class="reference internal" href="modules/robo/maximizers/scipy_optimizer.html#SciPyOptimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.scipy_optimizer.SciPyOptimizer" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.maximizers.scipy_optimizer.SciPyOptimizer.maximize">
-<tt class="descname">maximize</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robo/maximizers/scipy_optimizer.html#SciPyOptimizer.maximize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.scipy_optimizer.SciPyOptimizer.maximize" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">maximize</tt><big>(</big><big>)</big><a class="reference internal" href="modules/robo/maximizers/scipy_optimizer.html#SciPyOptimizer.maximize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.scipy_optimizer.SciPyOptimizer.maximize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximizes the given acquisition function.</p>
 <dl class="docutils">
 <dt>np.ndarray(N,D)</dt>
@@ -717,7 +717,7 @@ with N as the number of points and D is the number of features.</dd>
 
 <dl class="class">
 <dt id="robo.maximizers.base_maximizer.BaseMaximizer">
-<em class="property">class </em><tt class="descclassname">robo.maximizers.base_maximizer.</tt><tt class="descname">BaseMaximizer</tt><big>(</big><em>objective_function</em>, <em>lower</em>, <em>upper</em>, <em>rng=None</em><big>)</big><a class="reference internal" href="_modules/robo/maximizers/base_maximizer.html#BaseMaximizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.base_maximizer.BaseMaximizer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.maximizers.base_maximizer.</tt><tt class="descname">BaseMaximizer</tt><big>(</big><em>objective_function</em>, <em>lower</em>, <em>upper</em>, <em>rng=None</em><big>)</big><a class="reference internal" href="modules/robo/maximizers/base_maximizer.html#BaseMaximizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.base_maximizer.BaseMaximizer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -745,7 +745,7 @@ with N as the number of points and D is the number of features.</dd>
 
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/index.txt"
+    <li><a href="sources/index.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
