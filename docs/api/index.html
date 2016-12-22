@@ -8,8 +8,8 @@
     
     <title>Welcome to test’s documentation! &mdash; test 1 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -20,9 +20,9 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="test 1 documentation" href="#" /> 
   </head>
@@ -52,11 +52,11 @@
 <p>test at 1:03</p>
 <dl class="class">
 <dt id="robo.models.base_model.BaseModel">
-<em class="property">class </em><tt class="descclassname">robo.models.base_model.</tt><tt class="descname">BaseModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/robo/models/base_model.html#BaseModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">robo.models.base_model.</tt><tt class="descname">BaseModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="modules/robo/models/base_model.html#BaseModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract base class for all models</p>
 <dl class="method">
 <dt id="robo.models.base_model.BaseModel.get_json_data">
-<tt class="descname">get_json_data</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robo/models/base_model.html#BaseModel.get_json_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.get_json_data" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_json_data</tt><big>(</big><big>)</big><a class="reference internal" href="modules/robo/models/base_model.html#BaseModel.get_json_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.get_json_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json getter function&#8217;</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -70,7 +70,7 @@
 
 <dl class="method">
 <dt id="robo.models.base_model.BaseModel.predict">
-<tt class="descname">predict</tt><big>(</big><em>X</em><big>)</big><a class="reference internal" href="_modules/robo/models/base_model.html#BaseModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.predict" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">predict</tt><big>(</big><em>X</em><big>)</big><a class="reference internal" href="modules/robo/models/base_model.html#BaseModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predicts for a given X matrix the target values</p>
 <dl class="docutils">
 <dt>X: np.ndarray (N, D)</dt>
@@ -83,7 +83,7 @@ with N as the number of points and D is the number of features.</dd>
 
 <dl class="method">
 <dt id="robo.models.base_model.BaseModel.predictive_gradients">
-<tt class="descname">predictive_gradients</tt><big>(</big><em>X=None</em><big>)</big><a class="reference internal" href="_modules/robo/models/base_model.html#BaseModel.predictive_gradients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.predictive_gradients" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">predictive_gradients</tt><big>(</big><em>X=None</em><big>)</big><a class="reference internal" href="modules/robo/models/base_model.html#BaseModel.predictive_gradients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.predictive_gradients" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the predictive gradients (gradient of the prediction)</p>
 <dl class="docutils">
 <dt>X: np.ndarray (N, D)</dt>
@@ -95,7 +95,7 @@ with N as the number of points and D is the number of features.</dd>
 
 <dl class="method">
 <dt id="robo.models.base_model.BaseModel.train">
-<tt class="descname">train</tt><big>(</big><em>X</em>, <em>Y</em><big>)</big><a class="reference internal" href="_modules/robo/models/base_model.html#BaseModel.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.train" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">train</tt><big>(</big><em>X</em>, <em>Y</em><big>)</big><a class="reference internal" href="modules/robo/models/base_model.html#BaseModel.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.models.base_model.BaseModel.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trains the model on the provided data.</p>
 <dl class="docutils">
 <dt>X: np.ndarray (N, D)</dt>
@@ -120,7 +120,7 @@ match the number of points of X and T is the number of objectives</dd>
         <div class="sphinxsidebarwrapper">
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/index.txt"
+    <li><a href="sources/index.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
