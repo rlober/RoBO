@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robo.acquisition_functions.information_gain_mc &mdash; test 1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="test 1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../../index.html">test 1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robo.acquisition_functions.information_gain_mc</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">emcee</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
+
+<span class="kn">from</span> <span class="nn">robo.acquisition_functions.log_ei</span> <span class="kn">import</span> <span class="n">LogEI</span>
+<span class="kn">from</span> <span class="nn">robo.acquisition_functions.base_acquisition</span> <span class="kn">import</span> <span class="n">BaseAcquisitionFunction</span>
+<span class="kn">from</span> <span class="nn">robo.initial_design.init_random_uniform</span> <span class="kn">import</span> <span class="n">init_random_uniform</span>
+<span class="kn">from</span> <span class="nn">robo.util</span> <span class="kn">import</span> <span class="n">mc_part</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="InformationGainMC"><a class="viewcode-back" href="../../../index.html#robo.acquisition_functions.information_gain_mc.InformationGainMC">[docs]</a><span class="k">class</span> <span class="nc">InformationGainMC</span><span class="p">(</span><span class="n">BaseAcquisitionFunction</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span>
+                 <span class="n">Nb</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">Nf</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+                 <span class="n">sampling_acquisition</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">sampling_acquisition_kw</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;par&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
+                 <span class="n">Np</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The InformationGainMC computes the asymptotically exact, sampling</span>
+<span class="sd">        based variant of the entropy search acquisition_functions function [1] by</span>
+<span class="sd">        approximating the distribution over the minimum with MC sampling.</span>
+
+<span class="sd">        [1] Hennig and C. J. Schuler</span>
+<span class="sd">            Entropy search for information-efficient global optimization</span>
+<span class="sd">            Journal of Machine Learning Research, 13, 2012</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model: Model object</span>
+<span class="sd">            A model should have following methods:</span>
+<span class="sd">            - predict(X)</span>
+<span class="sd">            - predict_variance(X1, X2)</span>
+<span class="sd">        lower: np.ndarray (D)</span>
+<span class="sd">            Lower bounds of the input space</span>
+<span class="sd">        upper: np.ndarray (D)</span>
+<span class="sd">            Upper bounds of the input space</span>
+<span class="sd">        Nb: int</span>
+<span class="sd">            Number of representer points.</span>
+<span class="sd">        Np: int</span>
+<span class="sd">            Number of prediction points at X to calculate stochastic changes</span>
+<span class="sd">            of the mean for the representer points</span>
+<span class="sd">        Nf: int</span>
+<span class="sd">            Number of functions that are sampled to approximate pmin</span>
+<span class="sd">        sampling_acquisition: BaseAcquisitionFunction</span>
+<span class="sd">            A function to be used in calculating the density that</span>
+<span class="sd">            representer points are to be sampled from. It uses</span>
+<span class="sd">        sampling_acquisition_kw: dict</span>
+<span class="sd">            Additional keyword parameters to be passed to sampling_acquisition</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Nb</span> <span class="o">=</span> <span class="n">Nb</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">InformationGainMC</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sn2</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">sampling_acquisition</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">sampling_acquisition</span> <span class="o">=</span> <span class="n">LogEI</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_acquisition</span> <span class="o">=</span> <span class="n">sampling_acquisition</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="o">**</span><span class="n">sampling_acquisition_kw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Nf</span> <span class="o">=</span> <span class="n">Nf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Np</span> <span class="o">=</span> <span class="n">Np</span>
+
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">derivative</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">derivative</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="c"># Compute the fantasized pmin if we would evaluate at x</span>
+        <span class="n">new_pmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">change_pmin_by_innovation</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="c"># Calculate the Kullback-Leibler divergence between the old and the</span>
+        <span class="c"># fantasised pmin</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logP</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logP</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lmb</span><span class="p">)))</span>
+        <span class="n">dHp</span> <span class="o">=</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">new_pmin</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">new_pmin</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">lmb</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">H</span>
+        <span class="c"># We maximize</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dHp</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">sample_representer_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_acquisition</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="n">start_points</span> <span class="o">=</span> <span class="n">init_random_uniform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nb</span><span class="p">)</span>
+
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Nb</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_acquisition_wrapper</span><span class="p">)</span>
+
+        <span class="c"># zb are the representer points and lmb are their log EI values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lmb</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">start_points</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zb</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zb</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lmb</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lmb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lmb</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">sampling_acquisition_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">):</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_acquisition</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sn2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_noise</span><span class="p">()</span>
+
+        <span class="c"># Sample representer points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_acquisition</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_representer_points</span><span class="p">()</span>
+
+        <span class="c"># Omega values which are needed for the innovations</span>
+        <span class="c"># by sampling from a uniform grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Np</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                                      <span class="mi">1</span> <span class="o">-</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Np</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">Np</span><span class="p">))[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c"># Compute current posterior belief at the representer points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Mb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Vb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zb</span><span class="p">,</span> <span class="n">full_cov</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pmin</span> <span class="o">=</span> <span class="n">mc_part</span><span class="o">.</span><span class="n">joint_pmin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Mb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Vb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nf</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pmin</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">innovations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">rep</span><span class="p">):</span>
+        <span class="c"># Get the variance at x with noise</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c"># Get the variance at x without noise</span>
+        <span class="n">v_</span> <span class="o">=</span> <span class="n">v</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn2</span>
+
+        <span class="c"># Compute the variance between the test point x and</span>
+        <span class="c"># the representer points</span>
+        <span class="n">sigma_x_rep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict_variance</span><span class="p">(</span><span class="n">rep</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+        <span class="n">norm_cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sigma_x_rep</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">v_</span><span class="p">))</span>
+        <span class="c"># Compute the stochastic innovation for the mean</span>
+        <span class="n">dm_rep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">norm_cov</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">v</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">))</span>
+        <span class="n">dm_rep</span> <span class="o">=</span> <span class="n">dm_rep</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+
+        <span class="c"># Compute the deterministic innovation for the variance</span>
+        <span class="n">dv_rep</span> <span class="o">=</span> <span class="o">-</span><span class="n">norm_cov</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sigma_x_rep</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dm_rep</span><span class="p">,</span> <span class="n">dv_rep</span>
+
+    <span class="k">def</span> <span class="nf">change_pmin_by_innovation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+
+        <span class="c"># Compute the change of our posterior at the representer points for</span>
+        <span class="c"># different halluzinate function values of x</span>
+        <span class="n">dmdb</span><span class="p">,</span> <span class="n">dvdb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">innovations</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zb</span><span class="p">)</span>
+
+        <span class="c"># Update mean and variance of the posterior (at the representer points)</span>
+        <span class="c"># by the innovations</span>
+        <span class="n">Mb_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Mb</span> <span class="o">+</span> <span class="n">dmdb</span>
+        <span class="n">Vb_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Vb</span> <span class="o">+</span> <span class="n">dvdb</span>
+
+        <span class="c"># Return the fantasized pmin</span>
+        <span class="k">return</span> <span class="n">mc_part</span><span class="o">.</span><span class="n">joint_pmin</span><span class="p">(</span><span class="n">Mb_new</span><span class="p">,</span> <span class="n">Vb_new</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nf</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../../index.html">test 1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, numair.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

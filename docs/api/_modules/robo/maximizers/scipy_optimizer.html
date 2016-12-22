@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robo.maximizers.scipy_optimizer &mdash; test 1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="test 1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../../index.html">test 1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robo.maximizers.scipy_optimizer</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
+
+<span class="kn">from</span> <span class="nn">robo.maximizers.base_maximizer</span> <span class="kn">import</span> <span class="n">BaseMaximizer</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+
+<span class="k">class</span> <span class="nc">SciPyOptimizer</span><span class="p">(</span><span class="n">BaseMaximizer</span><span class="p">):</span>
+<div class="viewcode-block" id="SciPyOptimizer"><a class="viewcode-back" href="../../../index.html#robo.maximizers.scipy_optimizer.SciPyOptimizer">[docs]</a>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objective_function</span><span class="p">,</span> <span class="n">X_lower</span><span class="p">,</span>
+                 <span class="n">X_upper</span><span class="p">,</span> <span class="n">n_restarts</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interface for scipy&#39;s LBFGS implementation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        objective_function: acquisition function</span>
+<span class="sd">            The acquisition function which will be maximized</span>
+<span class="sd">        X_lower: np.ndarray (D)</span>
+<span class="sd">            Lower bounds of the input space</span>
+<span class="sd">        X_upper: np.ndarray (D)</span>
+<span class="sd">            Upper bounds of the input space</span>
+<span class="sd">        n_restarts: int</span>
+<span class="sd">            Determines how often the local search is repeated.</span>
+<span class="sd">        verbosity: bool</span>
+<span class="sd">            Show scipy output.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_restarts</span> <span class="o">=</span> <span class="n">n_restarts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SciPyOptimizer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">objective_function</span><span class="p">,</span>
+                                             <span class="n">X_lower</span><span class="p">,</span> <span class="n">X_upper</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_acquisition_fkt_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">acq_f</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">acq_f</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">]))</span>
+
+    <span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SciPyOptimizer.maximize"><a class="viewcode-back" href="../../../index.html#robo.maximizers.scipy_optimizer.SciPyOptimizer.maximize">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Maximizes the given acquisition function.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray(N,D)</span>
+<span class="sd">            Point with highest acquisition value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cand</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">n_restarts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_lower</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="n">cand_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">n_restarts</span><span class="p">])</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_acquisition_fkt_wrapper</span><span class="p">,</span> <span class="n">acq_f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_func</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_restarts</span><span class="p">):</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_lower</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">X_upper</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">X_lower</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
+
+            <span class="n">res</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span>
+                <span class="n">f</span><span class="p">,</span>
+                <span class="n">start</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="s">&quot;L-BFGS-B&quot;</span><span class="p">,</span>
+                <span class="n">bounds</span><span class="o">=</span><span class="nb">zip</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">X_lower</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">X_upper</span><span class="p">),</span>
+                <span class="n">options</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">&quot;disp&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span><span class="p">})</span>
+            <span class="n">cand</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">]</span>
+            <span class="n">cand_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s">&quot;fun&quot;</span><span class="p">]</span>
+
+        <span class="n">best</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">cand_vals</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cand</span><span class="p">[</span><span class="n">best</span><span class="p">]])</span>
+
+
+<span class="k">class</span> <span class="nc">SciPyGlobalOptimizer</span><span class="p">(</span><span class="n">BaseMaximizer</span><span class="p">):</span></div></div>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objective_function</span><span class="p">,</span> <span class="n">X_lower</span><span class="p">,</span> <span class="n">X_upper</span><span class="p">,</span>
+                 <span class="n">n_restarts</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">n_func_evals</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interface for scipy&#39;s global optimization method.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        objective_function: acquisition function</span>
+<span class="sd">            The acquisition function which will be maximized</span>
+<span class="sd">        X_lower: np.ndarray (D)</span>
+<span class="sd">            Lower bounds of the input space</span>
+<span class="sd">        X_upper: np.ndarray (D)</span>
+<span class="sd">            Upper bounds of the input space</span>
+<span class="sd">        n_restarts: int</span>
+<span class="sd">            Determines how often the local search is repeated.</span>
+<span class="sd">        verbosity: bool</span>
+<span class="sd">            Show scipy output.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_restarts</span> <span class="o">=</span> <span class="n">n_restarts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_func_evals</span> <span class="o">=</span> <span class="n">n_func_evals</span>
+        <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SciPyGlobalOptimizer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">objective_function</span><span class="p">,</span>
+                                                   <span class="n">X_lower</span><span class="p">,</span> <span class="n">X_upper</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_acquisition_fkt_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">acq_f</span><span class="p">):</span>
+        <span class="k">print</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">acq_f</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">]))</span>
+
+    <span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Maximizes the given acquisition function.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray(N,D)</span>
+<span class="sd">            Point with highest acquisition value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cand</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">n_restarts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_lower</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="n">cand_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">n_restarts</span><span class="p">])</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_acquisition_fkt_wrapper</span><span class="p">,</span> <span class="n">acq_f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_func</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_restarts</span><span class="p">):</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_lower</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">X_upper</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">X_lower</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">basinhopping</span><span class="p">(</span>
+                <span class="n">f</span><span class="p">,</span>
+                <span class="n">start</span><span class="p">,</span>
+                <span class="n">niter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_func_evals</span><span class="p">,</span>
+                <span class="n">minimizer_kwargs</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">&quot;bounds&quot;</span><span class="p">:</span> <span class="nb">zip</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">X_lower</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">X_upper</span><span class="p">),</span>
+                    <span class="s">&quot;method&quot;</span><span class="p">:</span> <span class="s">&quot;L-BFGS-B&quot;</span><span class="p">},</span>
+                <span class="n">disp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span><span class="p">)</span>
+
+            <span class="n">cand</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">cand_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">fun</span>
+        <span class="n">best</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">cand_vals</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cand</span><span class="p">[</span><span class="n">best</span><span class="p">]])</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cand</span><span class="p">[</span><span class="n">best</span><span class="p">]])</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../../index.html">test 1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, numair.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
