@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robo.solver.base_solver &#8212; Robo API 1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Robo API 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for robo.solver.base_solver</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">errno</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BaseSolver"><a class="viewcode-back" href="../../../index.html#robo.solver.base_solver.BaseSolver">[docs]</a><span class="k">class</span> <span class="nc">BaseSolver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">acquisition_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">maximize_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Base class which specifies the interface for solvers. Derive from</span>
+<span class="sd">        this class if you implement your own solver.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        acquisition_func: BaseAcquisitionFunction Object</span>
+<span class="sd">            The acquisition function which will be maximized.</span>
+<span class="sd">        model: ModelObject</span>
+<span class="sd">            Model (i.e. GaussianProcess, RandomForest) that models our current</span>
+<span class="sd">            believe of the objective function.</span>
+<span class="sd">        task: TaskObject</span>
+<span class="sd">            Task object that contains the objective function and additional</span>
+<span class="sd">            meta information such as the lower and upper bound of the search</span>
+<span class="sd">            space.</span>
+<span class="sd">        maximize_func: MaximizerObject</span>
+<span class="sd">            Optimization method that is used to maximize the acquisition</span>
+<span class="sd">            function</span>
+<span class="sd">        save_dir: String</span>
+<span class="sd">            Output path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">acquisition_func</span> <span class="o">=</span> <span class="n">acquisition_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maximize_func</span> <span class="o">=</span> <span class="n">maximize_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">task</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span> <span class="o">=</span> <span class="n">save_dir</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_save_dir</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BaseSolver.create_save_dir"><a class="viewcode-back" href="../../../index.html#robo.solver.base_solver.BaseSolver.create_save_dir">[docs]</a>    <span class="k">def</span> <span class="nf">create_save_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the save directory to store the runs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exception</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">exception</span><span class="o">.</span><span class="n">errno</span> <span class="o">!=</span> <span class="n">errno</span><span class="o">.</span><span class="n">EEXIST</span><span class="p">:</span>
+                <span class="k">raise</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="s1">&#39;results.csv&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file_json</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="s1">&#39;results.json&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">csv_writer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">json_writer</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    <span class="k">def</span> <span class="nf">get_observations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span>
+
+    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No model trained yet!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+
+<div class="viewcode-block" id="BaseSolver.run"><a class="viewcode-back" href="../../../index.html#robo.solver.base_solver.BaseSolver.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The main optimization loop</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        num_iterations: int</span>
+<span class="sd">            The number of iterations</span>
+<span class="sd">        X: np.ndarray(N,D)</span>
+<span class="sd">            Initial points that are already evaluated</span>
+<span class="sd">        y: np.ndarray(N,)</span>
+<span class="sd">            Function values of the already evaluated points</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray(1,D)</span>
+<span class="sd">            Incumbent</span>
+<span class="sd">        np.ndarray(1,1)</span>
+<span class="sd">            (Estimated) function value of the incumbent</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="BaseSolver.choose_next"><a class="viewcode-back" href="../../../index.html#robo.solver.base_solver.BaseSolver.choose_next">[docs]</a>    <span class="k">def</span> <span class="nf">choose_next</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Suggests a new point to evaluate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: np.ndarray(N,D)</span>
+<span class="sd">            Initial points that are already evaluated</span>
+<span class="sd">        y: np.ndarray(N,)</span>
+<span class="sd">            Function values of the already evaluated points</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray(1,D)</span>
+<span class="sd">            Suggested point</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="BaseSolver.get_json_data"><a class="viewcode-back" href="../../../index.html#robo.solver.base_solver.BaseSolver.get_json_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_json_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">it</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Json getter function</span>
+
+<span class="sd">        :return: dict() object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">jsonData</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;optimization_overhead&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">time_overhead</span><span class="p">[</span><span class="n">it</span><span class="p">],</span> <span class="s2">&quot;runtime&quot;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_start</span><span class="p">,</span>
+                    <span class="s2">&quot;incumbent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">incumbent</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                    <span class="s2">&quot;incumbent_fval&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">incumbent_value</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                    <span class="s2">&quot;time_func_eval&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_func_eval</span><span class="p">[</span><span class="n">it</span><span class="p">],</span>
+                    <span class="s2">&quot;iteration&quot;</span><span class="p">:</span> <span class="n">it</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">jsonData</span></div>
+
+<div class="viewcode-block" id="BaseSolver.save_json"><a class="viewcode-back" href="../../../index.html#robo.solver.base_solver.BaseSolver.save_json">[docs]</a>    <span class="k">def</span> <span class="nf">save_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">it</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves meta information of an iteration in a Json file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">base_solver_data</span> <span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_json_data</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+        <span class="n">base_model_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_json_data</span><span class="p">()</span>
+        <span class="n">base_task_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_json_data</span><span class="p">()</span>
+        <span class="n">base_acquisition_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">acquisition_func</span><span class="o">.</span><span class="n">get_json_data</span><span class="p">()</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Solver&#39;</span><span class="p">:</span> <span class="n">base_solver_data</span><span class="p">,</span>
+                <span class="s1">&#39;Model&#39;</span><span class="p">:</span> <span class="n">base_model_data</span><span class="p">,</span>
+                <span class="s1">&#39;Task&#39;</span><span class="p">:</span> <span class="n">base_task_data</span><span class="p">,</span>
+                <span class="s1">&#39;Acquisiton&#39;</span><span class="p">:</span> <span class="n">base_acquisition_data</span>
+                <span class="p">}</span>
+
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file_json</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># Json more readable. Drop it?</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Robo API 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, AAD Group.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+    </div>
+  </body>
+</html>
