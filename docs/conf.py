@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test documentation build configuration file, created by
+# Robo APIs build configuration file, created by
 # sphinx-quickstart on Sat Oct 15 20:21:40 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -53,8 +53,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'test'
-copyright = u'2016, numair'
+project = u'Robo API'
+copyright = u'2016, AAD Group'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -206,7 +206,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'test.tex', u'test Documentation',
+  ('index', 'test.tex', u'Robo APIs',
    u'numair', 'manual'),
 ]
 
@@ -236,7 +236,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'test', u'test Documentation',
+    ('index', 'test', u'Robo APIs',
      [u'numair'], 1)
 ]
 
@@ -250,7 +250,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'test', u'test Documentation',
+  ('index', 'test', u'Robo APIs',
    u'numair', 'test', 'One line description of project.',
    'Miscellaneous'),
 ]

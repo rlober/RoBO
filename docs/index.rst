@@ -8,7 +8,9 @@ APIs
 ============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
+
+   modules
 ------------
 Main Modules:
 ------------
@@ -100,15 +102,56 @@ Maximizers:
    :members:
 
 
+Priors:
+-------
 
+.. autoclass:: robo.priors.base_prior.BasePrior
+   :members:
 
+.. autoclass:: robo.priors.base_prior.TophatPrior
+   :members:
 
+.. autoclass:: robo.priors.base_prior.HorseshoePrior
+   :members:
 
+.. autoclass:: robo.priors.base_prior.LognormalPrior
+   :members:
 
+.. autoclass:: robo.priors.base_prior.NormalPrior
+   :members:
 
+.. autoclass:: robo.priors.bayesian_linear_regression_prior.BayesianLinearRegressionPrior
+   :members:
 
+.. autoclass:: robo.priors.default_priors.DefaultPrior
+   :members:
 
+.. autoclass:: robo.priors.env_priors.EnvPrior
+   :members:
 
+.. autoclass:: robo.priors.env_priors.EnvNoisePrior
+   :members:
 
+.. autoclass:: robo.priors.env_priors.MTBOPrior
+   :members:
 
+Solver:
+-------
 
+.. autoclass:: robo.solver.base_solver.BaseSolver
+   :members:
+
+.. autoclass:: robo.solver.bayesian_optimization.BayesianOptimization
+   :members:
+
+.. autoclass:: robo.solver.contextual_bayesian_optimization._ContextualAcquisitionFunction
+   :members:
+
+.. autoclass:: robo.solver.contextual_bayesian_optimization.MeanAcquisitionFunction
+   :members:
+
+.. autoclass:: robo.solver.contextual_bayesian_optimization.ContextualBayesianOptimization
+   :members:
+
+.. autoclass:: robo.solver.hyperband_datasets_size.HyperBand_DataSubsets
+   :members:
