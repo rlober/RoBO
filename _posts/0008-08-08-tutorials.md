@@ -6,10 +6,23 @@ title: Tutorials
 The following tutorials will show you how to use the different Bayesian optimization methods
 that are implemented in RoBO.
 
+1.[Blackbox function optimization with RoBO](bo)
+
+2.[Bohamiann](bohamiann)
+
+3.[Fabolas](fabolas)
+
+4.[Multi-Task Bayesian optimization](mtbo)
+
+5.[RoBO on HPOLIB2 benchmarks](hpolib)
+
+6.[Fitting a Bayesian neural network](bnn)
+
+
+
 The code for all the tutorials and more examples can be found in the ``examples`` folder.
 
-
-## Bayesian Optimization
+# Blackbox function optimization with Bayesian optimization
 
 This tutorial will show you how to use vanilla Bayesian optimization with Gaussian processes and
 different acquisition functions.
@@ -24,7 +37,8 @@ from robo.fmin import bayesian_optimization
 ```
 
 To use RoBO we have to define a function that symbolizes the objective function we want to minimize.
-The objective function gets an d-dimensional vector x and returns the corresponding scalar target value.
+The objective function gets an d-dimensional vector x and returns the corresponding scalar target value
+that will be optimized.
 
 ```python
 def objective_function(x):
@@ -32,9 +46,10 @@ def objective_function(x):
     return y
 ```
 
-Before we can apply Bayesian optimization we have to define the lower and upper bound of our input
-search space first.
-In this case we have just a one dimensional optimization problem.
+Before we run Bayesian optimization we first have to define the lower and upper bound of our input
+search space.
+In this case we have just a one dimensional optimization problem but Bayesian optimization
+is not restricted to that and normally works find up to 10 dimensions.
 
 ```python
 lower = np.array([0])
@@ -47,13 +62,19 @@ Now we have everything we need and can now run Bayesian optimization for 50 iter
 results = bayesian_optimization(objective_function, lower, upper, num_iterations=50)
 ```
 
-At the end we get a dictionary back with all the results and some additional meta information
+At the end we get a dictionary back with all the results and
+some additional meta information such as:
 
-```python
-print(results["x_opt"])
-```
+* "x_opt" : the best found data point
+* "f_opt" : the corresponding function value
+* "incumbents": the incumbent (best found value) of each iteration
+* "incumbent_value": the function values of the incumbent
+* "runtime": the runtime in seconds after each iteration
+* "runtime": the optimization overhead after (i.e. time data we do not spend for evaluating the function) of each iteration
+* "X": all data points that have been evaluated
+* "y": the corresponding function evaluations
 
-By default RoBO uses Gaussian processes (with MCMC sampling to obtain the GP#s hyperparameters) and logarithmic
+By default RoBO uses Gaussian processes (with MCMC sampling to obtain the GP's hyperparameters) and logarithmic
 expected improvement as acquisition function.
 If you would like to use a different acquisition function such as for instance the lower confidence bound
 you can simple :
@@ -72,7 +93,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 ```
 
-## Bohamiann
+# Bohamiann
 
 RoBO offers an simple interface for Bayesian Optimization with Hamiltonian Monte Carlo Artificial Neural Networks
 (BOHAMIANN) which was introduced by Sprigenberg et al.
@@ -93,7 +114,7 @@ from robo.fmin import bohamiann
 results = bohamiann(objective_function, lower, upper, num_iterations=50)
 ```
 
-Again this will return a dictionary with the results and some meta information.
+This will return a dictionary with the same meta information as described above.
 
 @inproceedings{springenberg-nips2016,
        booktitle = {Advances in Neural Information Processing Systems 29},
@@ -104,7 +125,7 @@ Again this will return a dictionary with the results and some meta information.
 }
 
 
-## Fabolas
+# Fabolas
 
 The idea of Fabolas (Klein et al.) is to take the training data set size as an additional input into account that
 can be freely chosen during the optimization procedure. However the goal is still to find
@@ -148,7 +169,7 @@ res = fabolas(objective_function,
                   num_iterations=100)
 ```
 
-You can find a full example for training a support vector machine on MNIST [here](https://github.com/automl/RoBO/blob/master/examples/example_fmin_fabolas.py)
+You can find a full example for training a support vector machine on MNIST [here](https://github.com/automl/RoBO/blob/master/examples/example_fabolas.py)
 
 @article{klein-corr16,
  author    = {A. Klein and S. Falkner and S. Bartels and P. Hennig and F. Hutter},
@@ -158,3 +179,102 @@ You can find a full example for training a support vector machine on MNIST [here
  lurl = {http://arxiv.org/abs/1605.07079},
  year      = {2016}
 }
+
+
+# RoBO on HPOLIB2 benchmarks
+
+[HPOlib2](https://github.com/automl/HPOlib2) contains a set of benchmarks with an unified interface for hyperparameter optimization of machine learning algorithms.
+In the following example we want to assume the often used synthetic function branin.
+Make sure that you installed HPOlib2.
+
+First we load the benchmark and get the bound of the configuration space
+```python
+from hpolib.benchmarks.synthetic_functions import Branin
+f = Branin()
+info = f.get_meta_information()
+bounds = np.array(info['bounds'])
+```
+
+Than we can simply run RoBO by:
+```python
+results = bayesian_optimization(f, bounds[:, 0], bounds[:, 1], num_iterations=50)
+```
+
+
+HPOlib2 allows to evaluate single configuration only subsets of the data which allows us to
+use Fabolas or MTBO.
+If want to use Fabolas to optimize let's say a support vector machine on MNIST we first have to
+wrap the HPOlib2 benchmarks class in order to pass the correct ration of the dataset size:
+
+
+```python
+from hpolib.benchmarks.ml.svm_benchmark import SvmOnMnist
+
+
+f = SvmOnMnist()
+
+def objective(x, s):
+    dataset_fraction = s / s_max
+
+    res = f.objective_function(x, dataset_fraction=dataset_fraction)
+    return res["function_value"], res["cost"]
+```
+
+Than we can run Fabolas simply by:
+
+```python
+
+info = f.get_meta_information()
+bounds = np.array(info['bounds'])
+lower = bounds[:, 0]
+upper = bounds[:, 1]
+
+results = fabolas(objective_function=objective, lower=lower, upper=upper,
+                  s_min=100, s_max=s_max, n_init=10, num_iterations=80, n_hypers=20, subsets=[64., 32, 16, 8])
+```
+
+# Fitting a Bayesian neural network
+
+The following tutorial shows you how to train a Bayesian neural networks with stochastic MCMC sampling
+on some data points. Note all models in RoBO implement the same interface and you can easily replace the Bayesian neural network
+by another model.
+
+Assume we collect some data point of a sinc function:
+
+```python
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from robo.models.bnn import BayesianNeuralNetwork
+from robo.initial_design.init_random_uniform import init_random_uniform
+
+
+def f(x):
+    return np.sinc(x * 10 - 5).sum(axis=1)
+
+X = init_random_uniform(np.zeros(1), np.ones(1), 20, rng)
+y = f(X)
+```
+
+We can now create and train a neural network by:
+
+```python
+model = BayesianNeuralNetwork(sampling_method="sghmc",
+                              l_rate=np.sqrt(1e-4),
+                              mdecay=0.05,
+                              burn_in=3000,
+                              n_iters=50000,
+                              precondition=True,
+                              normalize_input=True,
+                              normalize_output=True)
+model.train(X, y)
+```
+
+After training we can use our model to predict the mean and variance for
+arbitrary test points:
+
+```python
+x = np.linspace(0, 1, 100)[:, None]
+mean_pred, var_pred = model.predict(x)
+```
