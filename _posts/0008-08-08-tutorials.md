@@ -3,8 +3,9 @@ layout: post
 title: Tutorials
 ---
 
-The following tutorials will show you how to use the different Bayesian optimization methods
-that are implemented in RoBO.
+The following tutorials will help you to get familiar with RoBO.
+You can find the code for all the tutorials and additional examples
+in the ``examples`` folder.
 
 1.[Blackbox function optimization with RoBO](bo)
 
@@ -19,16 +20,16 @@ that are implemented in RoBO.
 6.[Fitting a Bayesian neural network](bnn)
 
 
-
-The code for all the tutorials and more examples can be found in the ``examples`` folder.
-
 # Blackbox function optimization with Bayesian optimization
 
-This tutorial will show you how to use vanilla Bayesian optimization with Gaussian processes and
-different acquisition functions.
+This tutorial will show you how to use standard Bayesian optimization with Gaussian processes and
+different acquisition functions to find the global minimizer of your (python) function.
+Note that RoBO so far only support continuous input space and it is not able to handle
+multi-objective functions.
+
 
 The first thing we have to do is to import numpy (for the objective function) and
-the bayesian_optimization function
+the bayesian_optimization interface
 
 ```python
 import numpy as np
@@ -37,8 +38,8 @@ from robo.fmin import bayesian_optimization
 ```
 
 To use RoBO we have to define a function that symbolizes the objective function we want to minimize.
-The objective function gets an d-dimensional vector x and returns the corresponding scalar target value
-that will be optimized.
+Interface of objective function is fairly simple, it gets an d-dimensional vector x
+and returns the corresponding scalar function value.
 
 ```python
 def objective_function(x):
@@ -48,8 +49,8 @@ def objective_function(x):
 
 Before we run Bayesian optimization we first have to define the lower and upper bound of our input
 search space.
-In this case we have just a one dimensional optimization problem but Bayesian optimization
-is not restricted to that and normally works find up to 10 dimensions.
+In this case our search space contains only one dimension, but Bayesian optimization
+is not restricted to that and normally works find up to 10 (continuous) dimensions.
 
 ```python
 lower = np.array([0])
@@ -62,15 +63,14 @@ Now we have everything we need and can now run Bayesian optimization for 50 iter
 results = bayesian_optimization(objective_function, lower, upper, num_iterations=50)
 ```
 
-At the end we get a dictionary back with all the results and
-some additional meta information such as:
+At the end we get a dictionary back with contains the following entries:
 
 * "x_opt" : the best found data point
 * "f_opt" : the corresponding function value
-* "incumbents": the incumbent (best found value) of each iteration
-* "incumbent_value": the function values of the incumbent
+* "incumbents": the incumbent (best found value) after each iteration
+* "incumbent_value": the function values of the incumbents
 * "runtime": the runtime in seconds after each iteration
-* "runtime": the optimization overhead after (i.e. time data we do not spend for evaluating the function) of each iteration
+* "runtime": the optimization overhead (i.e. time data we do not spend to evaluate the function) of each iteration
 * "X": all data points that have been evaluated
 * "y": the corresponding function evaluations
 
@@ -92,6 +92,20 @@ mechanism by adding the following two lines on top of your python script:
 import logging
 logging.basicConfig(level=logging.INFO)
 ```
+
+
+Besides standard Bayesian optimization, RoBO also contains an interface for plain random search and
+entropy search by Hennig et. al. Both methods follow the exact same interface.
+
+```python
+
+from robo.fmin import entropy_search
+from robo.fmin import random_search
+
+results = entropy_search(objective_function, lower, upper)
+results = random_search(objective_function, lower, upper)
+```
+
 
 # Bohamiann
 
@@ -128,14 +142,15 @@ This will return a dictionary with the same meta information as described above.
 # Fabolas
 
 The idea of Fabolas (Klein et al.) is to take the training data set size as an additional input into account that
-can be freely chosen during the optimization procedure. However the goal is still to find
-the best configuration for the full training dataset.
+can be freely chosen during the optimization procedure but is fixed afterwards.
+The idea is to speed up the optimization by evaluating single configurations only on much cheaper subset and
+to extrapolate their performance on the full dataset.
 
 By additionally modelling the cost of training single configurations, Fabolas uses the information gain per unit
 cost to pick and evaluate configurations on small subset of the training data that give the most information
 about the global minimum on the full dataset.
 
-The objective function gets besides a configuration also the training dataset size as input. After training
+Now the objective function gets besides a configuration also the training dataset size as an additional input. After training
 the configuration on a subset of the training data it returns the validation error on the full
 validation data set as well as the time it took to train this configuration.
 
@@ -201,7 +216,7 @@ results = bayesian_optimization(f, bounds[:, 0], bounds[:, 1], num_iterations=50
 ```
 
 
-HPOlib2 allows to evaluate single configuration only subsets of the data which allows us to
+HPOlib2 allows to evaluate single configurations only subsets of the data which allows us to
 use Fabolas or MTBO.
 If want to use Fabolas to optimize let's say a support vector machine on MNIST we first have to
 wrap the HPOlib2 benchmarks class in order to pass the correct ration of the dataset size:
@@ -235,9 +250,9 @@ results = fabolas(objective_function=objective, lower=lower, upper=upper,
 
 # Fitting a Bayesian neural network
 
-The following tutorial shows you how to train a Bayesian neural networks with stochastic MCMC sampling
-on some data points. Note all models in RoBO implement the same interface and you can easily replace the Bayesian neural network
-by another model.
+The following tutorial we will see how we can train a Bayesian neural networks with stochastic MCMC sampling
+on our dataset. Note all models in RoBO implement the same interface and you can easily replace the Bayesian neural network
+by another model (Gaussian processes, Random Forest, ...).
 
 Assume we collect some data point of a sinc function:
 
