@@ -19,4 +19,5 @@ Contents
    installation
    tutorials
    apis
+   example
    contact

@@ -32,7 +32,7 @@
     <script type="text/javascript" src="static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Contact" href="contact.html" />
+    <link rel="next" title="Examples" href="example.html" />
     <link rel="prev" title="Tutorials" href="tutorials.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -78,6 +78,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
 </ul>
 </ul>
@@ -584,6 +585,29 @@ match the number of points of X and T is the number of objectives</p>
 <div class="section" id="maximizers">
 <h3>Maximizers:<a class="headerlink" href="#maximizers" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
+<dt id="robo.maximizers.cmaes.CMAES">
+<em class="property">class </em><code class="descclassname">robo.maximizers.cmaes.</code><code class="descname">CMAES</code><span class="sig-paren">(</span><em>objective_function</em>, <em>lower</em>, <em>upper</em>, <em>verbose=True</em>, <em>restarts=0</em>, <em>n_func_evals=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/robo/maximizers/cmaes.html#CMAES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.cmaes.CMAES" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="robo.maximizers.cmaes.CMAES.maximize">
+<code class="descname">maximize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/robo/maximizers/cmaes.html#CMAES.maximize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.cmaes.CMAES.maximize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximizes the given acquisition function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">np.ndarray(N,D)</p>
+<blockquote class="last">
+<div><p>Point with the highest acquisition value.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="robo.maximizers.grid_search.GridSearch">
 <em class="property">class </em><code class="descclassname">robo.maximizers.grid_search.</code><code class="descname">GridSearch</code><span class="sig-paren">(</span><em>objective_function</em>, <em>lower</em>, <em>upper</em>, <em>resolution=1000</em><span class="sig-paren">)</span><a class="reference internal" href="modules/robo/maximizers/grid_search.html#GridSearch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.maximizers.grid_search.GridSearch" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
@@ -714,7 +738,7 @@ match the number of points of X and T is the number of objectives</p>
 
 <dl class="class">
 <dt id="robo.solver.bayesian_optimization.BayesianOptimization">
-<em class="property">class </em><code class="descclassname">robo.solver.bayesian_optimization.</code><code class="descname">BayesianOptimization</code><span class="sig-paren">(</span><em>objective_func</em>, <em>lower</em>, <em>upper</em>, <em>acquisition_func</em>, <em>model</em>, <em>maximize_func</em>, <em>initial_design=&lt;function init_random_uniform&gt;</em>, <em>initial_points=3</em>, <em>save_output=False</em>, <em>num_save=1</em>, <em>train_interval=1</em>, <em>n_restarts=1</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/robo/solver/bayesian_optimization.html#BayesianOptimization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.solver.bayesian_optimization.BayesianOptimization" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">robo.solver.bayesian_optimization.</code><code class="descname">BayesianOptimization</code><span class="sig-paren">(</span><em>objective_func</em>, <em>lower</em>, <em>upper</em>, <em>acquisition_func</em>, <em>model</em>, <em>maximize_func</em>, <em>initial_design=&lt;function init_random_uniform&gt;</em>, <em>initial_points=3</em>, <em>output_path=None</em>, <em>train_interval=1</em>, <em>n_restarts=1</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/robo/solver/bayesian_optimization.html#BayesianOptimization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.solver.bayesian_optimization.BayesianOptimization" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="robo.solver.bayesian_optimization.BayesianOptimization.choose_next">
 <code class="descname">choose_next</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em>, <em>do_optimize=True</em><span class="sig-paren">)</span><a class="reference internal" href="modules/robo/solver/bayesian_optimization.html#BayesianOptimization.choose_next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.solver.bayesian_optimization.BayesianOptimization.choose_next" title="Permalink to this definition">¶</a></dt>
@@ -747,12 +771,6 @@ maximized.</p>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="robo.solver.bayesian_optimization.BayesianOptimization.get_json_data">
-<code class="descname">get_json_data</code><span class="sig-paren">(</span><em>it</em><span class="sig-paren">)</span><a class="reference internal" href="modules/robo/solver/bayesian_optimization.html#BayesianOptimization.get_json_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robo.solver.bayesian_optimization.BayesianOptimization.get_json_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overrides method in BaseSolver.</p>
 </dd></dl>
 
 <dl class="method">

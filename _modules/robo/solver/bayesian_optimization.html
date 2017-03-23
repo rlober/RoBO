@@ -76,6 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact</a></li>
 </ul>
 </ul>
@@ -111,7 +112,9 @@
     <div class="col-md-9 content">
       
   <h1>Source code for robo.solver.bayesian_optimization</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">time</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -128,8 +131,7 @@
                  <span class="n">acquisition_func</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">maximize_func</span><span class="p">,</span>
                  <span class="n">initial_design</span><span class="o">=</span><span class="n">init_random_uniform</span><span class="p">,</span>
                  <span class="n">initial_points</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-                 <span class="n">save_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">num_save</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">train_interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                  <span class="n">n_restarts</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                  <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -138,7 +140,7 @@
 <span class="sd">        an acquisition function and a model to optimize a given objective_func.</span>
 <span class="sd">        This module keeps track of additional information such as runtime,</span>
 <span class="sd">        optimization overhead, evaluated points and saves the output</span>
-<span class="sd">        in a csv file.</span>
+<span class="sd">        in a json file.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -148,7 +150,10 @@
 <span class="sd">            Model (i.e. GaussianProcess, RandomForest) that models our current</span>
 <span class="sd">            believe of the objective function.</span>
 <span class="sd">        objective_func:</span>
-
+<span class="sd">            Function handle for the objective function</span>
+<span class="sd">        output_path: string</span>
+<span class="sd">            Specifies the path where the intermediate output after each iteration will be saved.</span>
+<span class="sd">            If None no output will be saved to disk.</span>
 <span class="sd">        initial_design: function</span>
 <span class="sd">            Function that returns some points which will be evaluated before</span>
 <span class="sd">            the Bayesian optimization loop is started. This allows to</span>
@@ -156,8 +161,6 @@
 <span class="sd">        initial_points: int</span>
 <span class="sd">            Defines the number of initial points that are evaluated before the</span>
 <span class="sd">            actual Bayesian optimization.</span>
-<span class="sd">        num_save: int</span>
-<span class="sd">            Defines after how many iteration the output is saved.</span>
 <span class="sd">        train_interval: int</span>
 <span class="sd">            Specifies after how many iterations the model is retrained.</span>
 <span class="sd">        n_restarts: int</span>
@@ -184,8 +187,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">train_interval</span> <span class="o">=</span> <span class="n">train_interval</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">=</span> <span class="n">lower</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">=</span> <span class="n">upper</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_output</span> <span class="o">=</span> <span class="n">save_output</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_save</span> <span class="o">=</span> <span class="n">num_save</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="o">=</span> <span class="n">output_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_start</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">incumbents</span> <span class="o">=</span> <span class="p">[]</span>
@@ -255,8 +257,8 @@
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">runtime</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_output</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_save</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">save_json</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">save_output</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
@@ -306,9 +308,8 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">runtime</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_output</span> <span class="ow">and</span> <span class="n">it</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_save</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">hypers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">hypers</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">save_json</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save_output</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Return </span><span class="si">%s</span><span class="s2"> as incumbent with error </span><span class="si">%f</span><span class="s2"> &quot;</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">incumbents</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">incumbents_values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -361,19 +362,18 @@
 
         <span class="k">return</span> <span class="n">x</span></div>
 
-<div class="viewcode-block" id="BayesianOptimization.get_json_data"><a class="viewcode-back" href="../../../apis.html#robo.solver.bayesian_optimization.BayesianOptimization.get_json_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_json_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">it</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Overrides method in BaseSolver.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">json_data</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s2">&quot;optimization_overhead&quot;</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_overhead</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_overhead</span><span class="p">[</span><span class="n">it</span><span class="p">],</span>
-                    <span class="s2">&quot;runtime&quot;</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_start</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_start</span><span class="p">,</span>
-                    <span class="s2">&quot;incumbents&quot;</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">incumbents</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">incumbents</span><span class="p">,</span>
-                    <span class="s2">&quot;incumbents_values&quot;</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">incumbents_values</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">incumbents_values</span><span class="p">,</span>
-                    <span class="s2">&quot;time_func_eval&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_func_evals</span><span class="p">[</span><span class="n">it</span><span class="p">],</span>
-                    <span class="s2">&quot;iteration&quot;</span><span class="p">:</span> <span class="n">it</span>
-                    <span class="p">}</span>
-        <span class="k">return</span> <span class="n">json_data</span></div></div>
+    <span class="k">def</span> <span class="nf">save_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">it</span><span class="p">):</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;optimization_overhead&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_overhead</span><span class="p">[</span><span class="n">it</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;runtime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runtime</span><span class="p">[</span><span class="n">it</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;incumbent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">incumbents</span><span class="p">[</span><span class="n">it</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;incumbents_value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">incumbents_values</span><span class="p">[</span><span class="n">it</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;time_func_eval&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_func_evals</span><span class="p">[</span><span class="n">it</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;iteration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">it</span>
+
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;robo_iter_</span><span class="si">%d</span><span class="s2">.json&quot;</span> <span class="o">%</span> <span class="n">it</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">))</span></div>
+
 </pre></div>
 
     </div>
