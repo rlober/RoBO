@@ -75,7 +75,7 @@ class CMAES(BaseMaximizer):
 
         res = cma.fmin(obj_func,
                 x0=start_point[0],
-                sigma0=0.6,
+                sigma0=0.8,
                 restarts=self.restarts,
                 options={"bounds": [self.X_lower, self.X_upper],
                          "verbose": verbose_level,

@@ -59,6 +59,8 @@ class GPyModel(BaseModel):
         """
         self.X = X
         self.Y = Y
+        #for (x, y) in zip(self.X,self.Y):
+        #    print('GPY \n\n', x, y, '\n\n')
         if X.size == 0 or Y.size == 0:
             return
 

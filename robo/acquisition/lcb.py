@@ -61,9 +61,9 @@ class LCB(BaseAcquisitionFunction):
             Derivative of LCB at X (only if derivative=True)
         """
         mean, var = self.model.predict(X)
-
+        #print (mean, var)
         # Minimize in f so we maximize the negative lower bound
-        acq = - (mean - self.par * np.sqrt(var))
+        acq = (mean - self.par * np.sqrt(var))
         if derivative:
             dm, dv = self.model.predictive_gradients(X)
             grad = -(dm - self.par * dv / (2 * np.sqrt(var)))

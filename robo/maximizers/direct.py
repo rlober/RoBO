@@ -33,7 +33,7 @@ class Direct(BaseMaximizer):
 
     def _direct_acquisition_fkt_wrapper(self, acq_f):
         def _l(x, user_data):
-            return -acq_f(np.array([x])), 0
+            return acq_f(np.array([x])), 0
         return _l
 
     def maximize(self):
